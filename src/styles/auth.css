@@ -1,0 +1,65 @@
+/* Sign-in — port of unique-ops .auth-page / .auth-box (global.css + apple-visuals.css §19).
+   Same sizes: 420px card, 40/34 padding, 24px radius, 50px pill button. Navy = TFL primary. */
+.auth-page {
+  min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  padding: 24px; color: rgb(var(--text-primary)); position: relative;
+  background: radial-gradient(1000px 500px at 50% -10%, rgb(var(--accent-fill) / 0.35), transparent 60%), rgb(var(--canvas));
+}
+.auth-box {
+  width: 420px; max-width: 100%; padding: 36px 34px 30px; border-radius: 24px;
+  background: rgb(var(--surface) / 0.9); border: 1px solid rgb(var(--divider));
+  backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 30px 80px -30px rgb(var(--accent-deep) / 0.35);
+}
+.auth-logo-wrap { display: flex; justify-content: center; margin-bottom: 22px; }
+.auth-logo { display: block; height: 180px !important; width: auto !important; }
+
+.auth-sub { color: rgb(var(--text-secondary)); font-size: 14px; line-height: 1.5; margin: 0 0 24px; text-align: center; }
+.auth-foot { margin: 20px 0 0; font-size: 13px; }
+.auth-error { color: rgb(220 53 69); font-size: 12.5px; margin-bottom: 12px; text-align: center; }
+.auth-label { display: block; margin-bottom: 8px; font-size: 12px; color: rgb(var(--text-secondary)); }
+.auth-input {
+  width: 100%; height: 48px; padding: 0 14px; border-radius: 12px; outline: none;
+  border: 1px solid rgb(var(--divider)); background: rgb(var(--canvas)); color: rgb(var(--text-primary)); font-size: 15px;
+}
+.auth-input::placeholder { color: rgb(var(--text-tertiary)); }
+.auth-input:focus { border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgb(var(--accent) / 0.22); }
+.auth-input:-webkit-autofill, .auth-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px rgb(var(--canvas)) inset; -webkit-text-fill-color: rgb(var(--text-primary)); caret-color: rgb(var(--text-primary));
+}
+.auth-pwd { position: relative; }
+.auth-pwd .auth-input { padding-right: 84px; }
+.auth-pwd button, .auth-identity button {
+  background: none; border: 0; color: inherit; opacity: 0.7; cursor: pointer; font-size: 13px; white-space: nowrap;
+}
+.auth-pwd button { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); opacity: 0.6; }
+.auth-pwd button:hover, .auth-identity button:hover { opacity: 1; }
+.auth-identity {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; margin-bottom: 14px;
+  border: 1px solid rgb(var(--divider)); border-radius: 12px; font-size: 14px;
+}
+.auth-identity span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.auth-btn {
+  width: 100%; height: 50px; margin-top: 22px; border: 0; border-radius: 999px; cursor: pointer;
+  font-size: 15.5px; font-weight: 600; color: #fff; background: rgb(var(--accent-deep));
+  box-shadow: 0 10px 28px -12px rgb(var(--accent-deep) / 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  transition: transform 0.12s, filter 0.12s, background 0.15s;
+}
+.auth-btn:hover:not(:disabled) { filter: brightness(1.18); transform: translateY(-1px); }
+.auth-btn:active:not(:disabled) { transform: scale(0.98); }
+.auth-btn:disabled { cursor: not-allowed; background: rgb(var(--surface-elevated)); color: rgb(var(--text-tertiary)); box-shadow: none; }
+.auth-text-link { background: none; border: 0; padding: 0; color: rgb(var(--text-secondary)); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-size: inherit; }
+.auth-text-link:hover { color: rgb(var(--text-primary)); }
+.auth-legal { margin: 0; font-size: 11px; color: rgb(var(--text-tertiary)); }
+.auth-legal button { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font-size: inherit; }
+.auth-legal button:hover { color: rgb(var(--text-secondary)); }
+@media (max-width: 480px) { .auth-box { padding: 28px 20px 24px; } .auth-logo { height: 120px !important; } }
+@media (max-height: 640px) { .auth-logo { height: 100px !important; } .auth-logo-wrap { margin-bottom: 14px; } }
+
+.auth-theme {
+  position: absolute; top: 16px; right: 16px; display: inline-flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 14px; border-radius: 999px; cursor: pointer; font-size: 13px;
+  color: rgb(var(--text-secondary)); background: rgb(var(--surface)); border: 1px solid rgb(var(--divider));
+  transition: color 0.12s, border-color 0.12s;
+}
+.auth-theme:hover { color: rgb(var(--text-primary)); border-color: rgb(var(--accent) / 0.5); }

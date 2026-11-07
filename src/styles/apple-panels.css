@@ -1,0 +1,111 @@
+/* Apple-style panels — one language for every dashboard, report and ledger page.
+   Rules: concentric corners, hairline edge + whisper of depth (no borders-on-borders),
+   one type scale, numbers right-aligned in tabular figures, quiet labels, loud figures. */
+
+:root {
+  --pnl-radius: 22px;
+  --pnl-edge: 0 0 0 .5px rgb(var(--divider));
+  --pnl-depth: 0 1px 2px rgb(0 0 0 / .03), 0 10px 28px -16px rgb(15 30 55 / .16);
+}
+:root[data-theme="dark"] { --pnl-depth: 0 12px 32px -18px rgb(0 0 0 / .65); --pnl-edge: 0 0 0 .5px rgb(255 255 255 / .09); }
+
+/* ── Panels ───────────────────────────────────────────── */
+main .brand-card,
+.pn-strip-cells, .pn-rail, .pn-queue {
+  border: 0;
+  border-radius: var(--pnl-radius);
+  background-color: rgb(var(--surface));
+  box-shadow: var(--pnl-edge), var(--pnl-depth);
+}
+@media (max-width: 767px) { main .brand-card { border-radius: 18px; } :root { --pnl-radius: 18px; } }
+main .brand-card.p-5 { padding: 22px 24px; }
+@media (max-width: 767px) { main .brand-card.p-5 { padding: 18px 16px; } }
+
+/* Titles: one calm hierarchy */
+main .brand-card > h2, main .brand-card > div > h2, .ios-h2 { font-size: 17px; font-weight: 650; letter-spacing: -.018em; color: rgb(var(--text-primary)); }
+main .brand-card h2 + p { margin-top: 3px; font-size: 13px; line-height: 1.45; color: rgb(var(--text-tertiary)); letter-spacing: -.003em; }
+
+/* Figures: tabular, tight, optically aligned */
+.tnum, .tabular-nums, .pn-cell-fig, .pn-hero-fig, .pn-ledger dd, .ios-stat-value {
+  font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1, "cv11" 1;
+}
+
+/* ── KPI strip ────────────────────────────────────────── */
+.pn-strip-cells { box-shadow: var(--pnl-edge), var(--pnl-depth); }
+.pn-cell { padding: 20px 22px 18px; gap: 8px; border-color: rgb(var(--divider) / .7); }
+.pn-cell-label { font-size: 12.5px; font-weight: 500; letter-spacing: -.003em; color: rgb(var(--text-secondary)); }
+.pn-cell-fig { font-weight: 680; letter-spacing: -.035em; }
+.pn-ledger { margin-top: 6px; padding-top: 10px; border-top: .5px solid rgb(var(--divider)); gap: 5px; }
+.pn-ledger dt { font-size: 10.5px; font-weight: 650; letter-spacing: .06em; color: rgb(var(--text-tertiary)); }
+.pn-ledger dd { font-size: 13.5px; font-weight: 500; }
+.pn-cell-foot { font-size: 12px; color: rgb(var(--text-tertiary)); }
+.pn-strip-rates { margin-top: 10px; padding: 0 6px; font-size: 11.5px; }
+
+/* ── Hero (dark focal card, works in all three themes) ── */
+.pn-hero {
+  border-radius: 26px;
+  background: linear-gradient(155deg, #14305a 0%, #0d2142 55%, #0a1a34 100%);
+  box-shadow: 0 0 0 .5px rgb(255 255 255 / .10), inset 0 1px 0 rgb(255 255 255 / .08), 0 18px 40px -22px rgb(8 20 40 / .55);
+}
+.pn-hero-main, .pn-hero-side { padding: 26px 28px 22px; }
+.pn-hero-side { background: transparent; }
+@media (min-width: 900px) { .pn-hero-side { border-left: .5px solid rgb(255 255 255 / .14); } }
+@media (max-width: 899px) { .pn-hero-side { border-top: .5px solid rgb(255 255 255 / .14); } }
+.pn-hero-label { font-size: 12.5px; font-weight: 550; letter-spacing: .01em; color: rgb(244 247 251 / .62); }
+.pn-hero-fig { letter-spacing: -.045em; }
+.pn-hero-link { margin-top: auto; padding-top: 14px; font-size: 13px; font-weight: 600; color: #a9cdf7; }
+.pn-hero-link::after { content: " ›"; opacity: .8; }
+.pn-hero-link:hover { color: #fff; }
+.pn-hero-rows > div { border-top-width: .5px; }
+/* bars: real months pop, empty months become a calm baseline */
+.pn-spark span.bar { min-height: 4px; background: linear-gradient(180deg, #8dbcf2 0%, #5f9be0 100%); border-radius: 6px 6px 3px 3px; }
+.pn-spark-x span { color: rgb(244 247 251 / .5); }
+
+/* ── Pipeline rail + work queue ───────────────────────── */
+.pn-stage { border-left-width: .5px; }
+.pn-q { padding: 15px 20px 15px 18px; }
+.pn-queue > div + div .pn-q { border-top-width: .5px; }
+.pn-q-ic { border-radius: 11px; }
+
+/* ── Reports table: aligned grid, numbers right ───────── */
+.rp-th, .rp-row {
+  --rp-cols: minmax(0, 1.5fr) 64px repeat(3, minmax(0, 1fr));
+  display: grid; align-items: start; column-gap: 20px;
+  margin: 0 -24px; padding-left: 24px; padding-right: 24px;
+}
+@media (min-width: 768px) { .rp-th, .rp-row { grid-template-columns: var(--rp-cols); } }
+.rp-th { padding-bottom: 10px; border-bottom: .5px solid rgb(var(--divider)); font-size: 11px; letter-spacing: .06em; }
+.rp-row { padding-top: 14px; padding-bottom: 14px; min-height: 52px; border-top: .5px solid rgb(var(--divider)); transition: background-color .14s ease; }
+.rp-body > .rp-row:first-child { border-top: 0; }
+.rp-r { text-align: right; justify-self: end; }
+.rp-row .rp-num { font-variant-numeric: tabular-nums; }
+.rp-row .rp-num .flex { align-items: flex-end; }
+.rp-row > div:first-child span:first-child { font-weight: 560; letter-spacing: -.008em; }
+@media (hover: hover) { .rp-row--link:hover { background: rgb(var(--fill-primary) / .045); } }
+.rp-row--link:active { background: rgb(var(--fill-primary) / .08); }
+@media (max-width: 767px) { .rp-row { margin: 0 -16px; padding-left: 16px; padding-right: 16px; } .rp-r { text-align: left; justify-self: start; } .rp-row .rp-num .flex { align-items: flex-start; } }
+
+/* ── Profit & loss: inset grouped list ────────────────── */
+.pnl-row { padding-top: 14px; padding-bottom: 14px; transition: background-color .14s ease; }
+.pnl-row--strong { background: rgb(var(--fill-primary) / .025); }
+.pnl-row--total { background: rgb(var(--accent-fill) / .06); }
+.pnl-row--total span:last-child { font-size: 17px; letter-spacing: -.02em; }
+
+/* ── Aged creditors / meters ──────────────────────────── */
+.ap-meter { height: 6px; width: 100%; border-radius: 999px; overflow: hidden; background: rgb(var(--fill-primary) / .07); }
+.ap-meter-fill { height: 100%; min-width: 0; border-radius: 999px; background: linear-gradient(90deg, rgb(var(--accent-fill)) 0%, rgb(var(--accent-fill) / .78) 100%); transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+
+/* ── Soft entrance: panels rise in, one after another ─── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes pnl-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  main .brand-card, .pn-hero, .pn-strip-cells, .pn-rail, .pn-queue { animation: pnl-rise .38s cubic-bezier(.22, .8, .3, 1) both; }
+  main .space-y-6 > :nth-child(2) { animation-delay: .04s; }
+  main .space-y-6 > :nth-child(3) { animation-delay: .08s; }
+  main .space-y-6 > :nth-child(4) { animation-delay: .12s; }
+  main .space-y-6 > :nth-child(5) { animation-delay: .16s; }
+}
+
+/* ── Twilight: light page keeps the cool, quiet panel edge ─ */
+:root[data-nav="dark"][data-theme="light"] { --pnl-edge: 0 0 0 .5px rgb(var(--divider)); --pnl-depth: 0 1px 2px rgb(0 0 0 / .04), 0 12px 30px -18px rgb(0 0 0 / .22); }
+
+@media (prefers-contrast: more) { :root { --pnl-edge: 0 0 0 1px rgb(var(--divider)); } }

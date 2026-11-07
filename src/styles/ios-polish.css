@@ -1,0 +1,68 @@
+/* The Film Location CRM — shared iOS polish for every module (v78).
+   Brings the older card-based pages in line with the inset-grouped look used by the
+   Dashboard and the iOS kit: one corner radius, hairline border, no heavy shadow,
+   and no sideways scroll on phones. Colours come from theme tokens only. */
+main .brand-card {
+  border-radius: 14px;
+  border: 1px solid rgb(var(--divider));
+  background-color: rgb(var(--surface));
+  box-shadow: none;
+}
+main .brand-card.divide-y > * + *,
+main .brand-card .divide-y > * + * { border-color: rgb(var(--separator, 60 60 67) / var(--separator-opacity, 0.29)); }
+
+/* page titles: iOS large title rhythm */
+main h1 { letter-spacing: -0.028em; }
+
+/* segmented controls and pills stay on one line and scroll instead of wrapping awkwardly */
+.ios-segment { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.ios-segment::-webkit-scrollbar { display: none; }
+
+/* phones */
+@media (max-width: 767px) {
+  main { overflow-x: hidden; }
+  main .brand-card { border-radius: 12px; }
+  main .ios-large-title { font-size: 28px; }
+}
+/* large screens: keep line length calm */
+@media (min-width: 1600px) {
+  main .db { max-width: 1280px; }
+}
+
+/* ---- v79: shared iOS look for every older module page ---------------------- */
+/* lists inside cards: roomier rows, soft press state, hairline separators */
+main .brand-card.divide-y > *,
+main .brand-card .divide-y > * { transition: background-color .14s ease; }
+@media (hover: hover) {
+  main .brand-card.divide-y > a:hover,
+  main .brand-card.divide-y > button:hover,
+  main .brand-card.divide-y > [role="button"]:hover { background-color: rgb(var(--fill-primary) / var(--fill-opacity-2)); }
+}
+main .brand-card.divide-y > button { width: 100%; text-align: left; }
+
+/* section headings inside cards read like iOS group labels */
+main .brand-card h2,
+main section > h2 { letter-spacing: -0.01em; }
+
+/* tables: quiet header row, hairline row separators, no heavy grid */
+main table { border-collapse: collapse; }
+main table thead th { font-size: 11.5px; font-weight: 600; letter-spacing: .04em; color: rgb(var(--text-tertiary)); text-transform: uppercase; }
+main table tbody tr { border-top: 1px solid rgb(var(--separator) / var(--separator-opacity)); }
+main table tbody tr:first-child { border-top: 0; }
+@media (hover: hover) { main table tbody tr:hover { background-color: rgb(var(--fill-primary) / var(--fill-opacity-2)); } }
+
+/* form controls: iOS-style rounded fields */
+main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+main select,
+main textarea { border-radius: 10px; }
+main button.brand-focus { -webkit-tap-highlight-color: transparent; }
+
+/* page title block spacing */
+main h1.ios-large-title + p { margin-top: 4px; font-size: 14px; }
+
+/* phones: bigger tap targets in lists, tables scroll inside their card */
+@media (max-width: 767px) {
+  main .brand-card.divide-y > * { min-height: 48px; }
+  main .brand-card { overflow-x: auto; }
+  main h1.ios-large-title { font-size: 28px; }
+}

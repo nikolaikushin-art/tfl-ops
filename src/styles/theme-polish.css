@@ -1,0 +1,59 @@
+/* Theme polish — one pass across Light, Twilight and Dark.
+   Principles: layers rise in lightness (dark), soft layered shadows (light), hairline edges,
+   steady focus ring, and respect for the system's contrast / transparency / motion settings. */
+
+/* ── Type rendering (all themes) ── */
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; -webkit-tap-highlight-color: transparent; }
+::selection { background: rgb(var(--accent-fill) / .28); }
+:root[data-theme="dark"] ::selection, :root[data-nav="dark"] :is(.mside, .mnav, .tbar, .rs-head, .rs-mhead, .msheet) ::selection { background: rgb(255 255 255 / .22); }
+
+/* ── Focus: one consistent ring everywhere ── */
+:where(a, button, input, select, textarea, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: inherit;
+}
+
+/* ── Light: soft, layered depth instead of hard borders ── */
+:root[data-theme="light"] .rs-shell,
+:root[data-theme="light"] .rs-stage.has-card .rs-shell {
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .06), 0 1px 2px rgb(0 0 0 / .04), 0 12px 32px -16px rgb(15 30 55 / .22);
+}
+
+/* ── Dark: no heavy shadows — a faint top highlight lifts each layer ── */
+:root[data-theme="dark"] .rs-shell,
+:root[data-theme="dark"] .rs-stage.has-card .rs-shell {
+  box-shadow: 0 0 0 .5px rgb(255 255 255 / .07), 0 18px 44px -20px rgb(0 0 0 / .7);
+}
+:root[data-theme="dark"] .rs-head,
+:root[data-theme="dark"] .rs-mhead {
+  background: rgb(var(--canvas) / .9);
+  box-shadow: inset 0 -.5px 0 rgb(255 255 255 / .06);
+}
+:root[data-theme="dark"] .rs-panel--side { background: rgb(var(--surface)); }
+:root[data-theme="dark"] .rs-panel--main { background: rgb(var(--canvas)); }
+:root[data-theme="dark"] .msheet { background: rgb(var(--surface)); }
+:root[data-theme="dark"] .mdrawer { background: rgb(var(--surface)); }
+
+/* ── Twilight: light page, dark chrome — keep the seam crisp ── */
+:root[data-nav="dark"] .rs-panel--side { box-shadow: inset -.5px 0 0 rgb(255 255 255 / .06); }
+
+/* ── Smooth hand-off when switching theme (only the big surfaces) ── */
+@media (prefers-reduced-motion: no-preference) {
+  .rs-head, .rs-mhead, .rs-panel, .tbar, .mnav, .mside, .msheet, .mdrawer, .mbn {
+    transition: background-color .22s ease, border-color .22s ease, color .22s ease;
+  }
+}
+
+/* ── System accessibility settings ── */
+@media (prefers-contrast: more) {
+  :root { --divider-boost: 1; }
+  .rs-head, .rs-mhead, .tbar, .mbn { border-bottom-width: 1.5px; }
+  :root[data-theme="light"] { --divider: 150 150 158; --text-secondary: 70 70 78; }
+  :root[data-theme="dark"], :root[data-nav="dark"] :is(.mside, .mnav, .tbar, .rs-head, .rs-mhead, .msheet, .mdrawer) { --divider: 96 92 96; --text-secondary: 214 210 202; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .rs-head, .rs-mhead, .tbar, .mbn, .msheet, .ai-fab { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  :root[data-theme="dark"] .rs-head, :root[data-theme="dark"] .rs-mhead { background: rgb(var(--canvas)); }
+}
+
+/* ── Themed scrollbars (thin, quiet) ── */
+* { scrollbar-width: thin; scrollbar-color: rgb(var(--text-tertiary) / .45) transparent; }

@@ -1,0 +1,382 @@
+// TFL domain model (Stage 2). Self-contained: does not touch the old TFL store.
+export type TflKey =
+  | "locations" | "owners" | "productions" | "enquiries" | "scouting"
+  | "bookings" | "quotes" | "invoices" | "contracts" | "permits"
+  | "assessments" | "shortlists" | "insurance" | "payments"
+  | "registrations" | "incidents" | "neighbours" | "tasks";
+
+export type TflRecord = { id: string } & Record<string, string | number>;
+
+export type FieldType = "text" | "number" | "date" | "select" | "textarea" | "email" | "tel" | "url";
+export type FieldDef = {
+  key: string; label: string; type?: FieldType; options?: string[];
+  required?: boolean; list?: boolean; ref?: TflKey; // ref = pick from another module by name
+  help?: string;               // small hint under the input
+  default?: string | number;   // value for a NEW record ("today" = today's date)
+  section?: string;            // heading shown above this field in the editor and detail page
+};
+export type ModuleDef = {
+  key: TflKey; title: string; singular: string; blurb: string;
+  fields: FieldDef[]; statusKey?: string; titleKey: string; money?: string;
+};
+
+const STATUS = {
+  enquiry: ["New", "Scouting", "Shortlisted", "Quoted", "Won", "Lost"],
+  booking: ["Hold", "Confirmed", "Shot", "Wrapped", "Cancelled"],
+  quote: ["Draft", "Sent", "Accepted", "Declined", "Expired"],
+  invoice: ["Draft", "Sent", "Part paid", "Paid", "Overdue"],
+  contract: ["Draft", "Out for signature", "Signed", "Expired"],
+  permit: ["Not started", "Applied", "Approved", "Rejected", "Expired"],
+  visit: ["Planned", "Done", "Cancelled"],
+  prod: ["Development", "Pre-production", "Shooting", "Post", "Closed"],
+};
+const CUR = ["GBP", "EUR", "USD", "AED"];
+/** UK standard rate of VAT, pre-filled on new quotations and invoices. Change here if TFL is not VAT registered (use 0). */
+export const DEFAULT_VAT_PCT = 20;
+const LOC_TYPES = ["House", "Flat / apartment", "Country house / estate", "Warehouse / industrial", "Office", "Hotel / pub / restaurant", "Theatre / cinema", "Museum / gallery", "School / university", "Church / chapel", "Street / exterior", "Studio", "Heritage / listed", "Park / outdoor", "Other"];
+const YESNO = ["Yes", "No", "Not sure"];
+
+export const MODULES: Record<TflKey, ModuleDef> = {
+  locations: {
+    key: "locations", title: "Locations", singular: "location", titleKey: "name", statusKey: "status", money: "dayRate",
+    blurb: "The library: every property, its owner, rates and restrictions.",
+    fields: [
+      { key: "name", label: "Name", required: true, list: true, section: "Basics" },
+      { key: "type", label: "Type", type: "select", list: true, options: LOC_TYPES },
+      { key: "area", label: "Borough / county", list: true },
+      { key: "address", label: "Address", help: "Street and building, as the production would need it." },
+      { key: "postcode", label: "Postcode", help: "e.g. NW11 8NA" },
+      { key: "what3words", label: "what3words", help: "Optional: three words, e.g. filled.count.soap." },
+      { key: "mapUrl", label: "Map link", type: "url", help: "Google Maps or similar." },
+      { key: "owner", label: "Owner", ref: "owners", list: true },
+      { key: "onSiteContact", label: "On-site contact" },
+      { key: "onSitePhone", label: "On-site phone", type: "tel" },
+      { key: "dayRate", label: "Day rate", type: "number", list: true, section: "Rates" },
+      { key: "halfDayRate", label: "Half-day rate", type: "number" },
+      { key: "prepRate", label: "Prep / strike day rate", type: "number", help: "Rate for set-up and wrap days, if different." },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "deposit", label: "Security deposit", type: "number" },
+      { key: "capacity", label: "Max crew", type: "number", section: "Practical details" },
+      { key: "parking", label: "Parking spaces", type: "number" },
+      { key: "powerAvailable", label: "Power on site", type: "select", options: YESNO },
+      { key: "permitRequired", label: "Permit required", type: "select", options: YESNO },
+      { key: "droneAllowed", label: "Drones allowed", type: "select", options: YESNO },
+      { key: "features", label: "Features (pool, sea view, rooftop…)", type: "textarea", help: "Used by search: write the words a producer would use." },
+      { key: "restrictions", label: "Restrictions (noise, hours, parking, drones)", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Available", "Limited", "Unavailable", "Archived"], default: "Available", section: "Status" },
+    ],
+  },
+  owners: {
+    key: "owners", title: "Owners & Suppliers", singular: "owner / supplier", titleKey: "name", statusKey: "kind",
+    blurb: "Location owners, agents and suppliers (catering, power, security, transport).",
+    fields: [
+      { key: "name", label: "Name / company", required: true, list: true },
+      { key: "kind", label: "Kind", type: "select", list: true, options: ["Owner", "Agent", "Supplier", "Authority"], default: "Owner" },
+      { key: "category", label: "Supplier category", type: "select", options: ["Catering", "Power / generators", "Lighting & grip", "Security", "Transport", "Toilets & welfare", "Cleaning", "Other"], help: "Only for suppliers." },
+      { key: "contact", label: "Contact person", list: true, section: "Contact" },
+      { key: "email", label: "Email", type: "email", list: true },
+      { key: "phone", label: "Phone", type: "tel" },
+      { key: "whatsapp", label: "WhatsApp", type: "tel" },
+      { key: "website", label: "Website", type: "url" },
+      { key: "address", label: "Address" },
+      { key: "taxNumber", label: "VAT registration no.", section: "Payment" },
+      { key: "paymentTerms", label: "Payment terms (days)", type: "number" },
+      { key: "bank", label: "Bank details for payouts", type: "textarea" },
+      { key: "notes", label: "Notes", type: "textarea", section: "Notes" },
+    ],
+  },
+  productions: {
+    key: "productions", title: "Productions", singular: "production", titleKey: "title", statusKey: "stage",
+    blurb: "Clients and the projects they are shooting.",
+    fields: [
+      { key: "title", label: "Project title", required: true, list: true },
+      { key: "company", label: "Production company", list: true },
+      { key: "producer", label: "Producer / contact", list: true },
+      { key: "email", label: "Email", type: "email" },
+      { key: "phone", label: "Phone", type: "tel" },
+      { key: "format", label: "Format", type: "select", options: ["Feature", "TV series", "Commercial", "Music video", "Photo shoot", "Documentary", "Other"] },
+      { key: "stage", label: "Stage", type: "select", list: true, options: STATUS.prod, default: "Development" },
+      { key: "country", label: "Production country" },
+      { key: "budget", label: "Location budget", type: "number" },
+      { key: "billingName", label: "Bill to (legal name)", section: "Billing" },
+      { key: "billingAddress", label: "Billing address", type: "textarea" },
+      { key: "taxNumber", label: "VAT registration no." },
+      { key: "paymentTerms", label: "Payment terms (days)", type: "number", default: 30 },
+    ],
+  },
+  enquiries: {
+    key: "enquiries", title: "Enquiries", singular: "enquiry", titleKey: "brief", statusKey: "status",
+    blurb: "Incoming location briefs, from first call to won or lost.",
+    fields: [
+      { key: "brief", label: "Brief (what they need)", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "source", label: "How it came in", type: "select", options: ["Phone", "Email", "WhatsApp", "Referral", "Website", "Repeat client", "Other"] },
+      { key: "assignedTo", label: "Handled by" },
+      { key: "received", label: "Received", type: "date", list: true, default: "today" },
+      { key: "shootStart", label: "Shoot start", type: "date", section: "Shoot" },
+      { key: "shootEnd", label: "Shoot end", type: "date" },
+      { key: "locationType", label: "Location type wanted", type: "select", options: LOC_TYPES },
+      { key: "crewSize", label: "Crew size", type: "number" },
+      { key: "budget", label: "Budget", type: "number" },
+      { key: "requirements", label: "Requirements", type: "textarea" },
+      { key: "followUp", label: "Follow up on", type: "date", section: "Follow-up", help: "When to chase this enquiry." },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.enquiry, default: "New" },
+      { key: "lostReason", label: "Reason if lost", type: "select", options: ["Price", "Dates", "Location unavailable", "Went elsewhere", "Project cancelled", "No reply", "Other"] },
+    ],
+  },
+  scouting: {
+    key: "scouting", title: "Scouting & Site Visits", singular: "site visit", titleKey: "location", statusKey: "status",
+    blurb: "Recces and site visits linked to an enquiry.",
+    fields: [
+      { key: "location", label: "Location", ref: "locations", required: true, list: true },
+      { key: "enquiry", label: "Enquiry", ref: "enquiries", list: true },
+      { key: "date", label: "Visit date", type: "date", list: true },
+      { key: "time", label: "Time" },
+      { key: "attendees", label: "Attendees" },
+      { key: "contactMet", label: "Owner / contact at the visit" },
+      { key: "outcome", label: "Outcome", type: "select", list: true, options: ["Recommended", "Maybe", "Rejected", "Not decided"] },
+      { key: "notes", label: "Findings / notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.visit, default: "Planned" },
+    ],
+  },
+  bookings: {
+    key: "bookings", title: "Bookings & Availability", singular: "booking", titleKey: "location", statusKey: "status", money: "agreed",
+    blurb: "Holds and confirmed dates. Overlaps on the same location are flagged.",
+    fields: [
+      { key: "location", label: "Location", ref: "locations", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "startDate", label: "From", type: "date", required: true, list: true },
+      { key: "endDate", label: "To", type: "date", required: true, list: true },
+      { key: "prepNotes", label: "Prep / strike days", help: "e.g. prep 2 days before, strike the day after. Not counted for clashes." },
+      { key: "callTime", label: "Call time" },
+      { key: "insurance", label: "Public liability insurance", type: "select", options: ["Not needed", "Requested", "Received"], help: "Certificate from the production, usually £5m or £10m cover." },
+      { key: "riskAssessment", label: "Risk assessment (RAMS)", type: "select", options: ["Not needed", "Requested", "Received"] },
+      { key: "crewSize", label: "Crew size", type: "number" },
+      { key: "agreed", label: "Agreed fee", type: "number", section: "Money" },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "deposit", label: "Deposit", type: "number" },
+      { key: "depositStatus", label: "Deposit status", type: "select", options: ["Not required", "Requested", "Received", "Refunded"] },
+      { key: "notes", label: "Notes", type: "textarea", section: "Notes" },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.booking, default: "Hold" },
+    ],
+  },
+  quotes: {
+    key: "quotes", title: "Quotations", singular: "quotation", titleKey: "ref", statusKey: "status", money: "amount",
+    blurb: "Quotes to productions for locations and services.",
+    fields: [
+      { key: "ref", label: "Reference", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "enquiry", label: "Enquiry", ref: "enquiries" },
+      { key: "description", label: "Scope", type: "textarea" },
+      { key: "amount", label: "Amount (before VAT)", type: "number", list: true, section: "Money" },
+      { key: "vatPct", label: "VAT %", type: "number", default: DEFAULT_VAT_PCT, help: "UK standard rate is 20%. Use 0 if no VAT applies. Older records without VAT count as 0." },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "issued", label: "Issued", type: "date", default: "today" },
+      { key: "validUntil", label: "Valid until", type: "date" },
+      { key: "terms", label: "Terms & conditions", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.quote, default: "Draft" },
+    ],
+  },
+  invoices: {
+    key: "invoices", title: "Invoices", singular: "invoice", titleKey: "ref", statusKey: "status", money: "amount",
+    blurb: "Billing to productions; track what is paid and overdue.",
+    fields: [
+      { key: "ref", label: "Invoice no.", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "booking", label: "Booking", ref: "bookings" },
+      { key: "quote", label: "Quotation", ref: "quotes" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "amount", label: "Amount (before VAT)", type: "number", list: true, section: "Money" },
+      { key: "vatPct", label: "VAT %", type: "number", default: DEFAULT_VAT_PCT, help: "UK standard rate is 20%. Use 0 if no VAT applies. Older records without VAT count as 0." },
+      { key: "paid", label: "Paid so far", type: "number", help: "Include VAT: this is what has actually been received." },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "issued", label: "Issued", type: "date", default: "today" },
+      { key: "due", label: "Due", type: "date", list: true },
+      { key: "paidOn", label: "Last payment on", type: "date" },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.invoice, default: "Draft" },
+    ],
+  },
+  contracts: {
+    key: "contracts", title: "Contracts", singular: "contract", titleKey: "title", statusKey: "status",
+    blurb: "Location agreements and releases, with signature status.",
+    fields: [
+      { key: "title", label: "Title", required: true, list: true },
+      { key: "booking", label: "Booking", ref: "bookings" },
+      { key: "counterparty", label: "Counterparty", ref: "owners", list: true },
+      { key: "kind", label: "Type", type: "select", options: ["Location agreement", "Release", "Supplier agreement", "NDA", "Other"] },
+      { key: "value", label: "Contract value", type: "number" },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "signedOn", label: "Signed on", type: "date" },
+      { key: "expires", label: "Expires", type: "date", list: true },
+      { key: "notes", label: "Key terms / notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.contract, default: "Draft" },
+    ],
+  },
+  permits: {
+    key: "permits", title: "Permits", singular: "permit", titleKey: "title", statusKey: "status",
+    blurb: "Filming permits and approvals, with authority and expiry.",
+    fields: [
+      { key: "title", label: "Permit", required: true, list: true },
+      { key: "booking", label: "Booking", ref: "bookings" },
+      { key: "authority", label: "Authority", ref: "owners", list: true },
+      { key: "kind", label: "Type", type: "select", options: ["Council filming permit", "Road closure (TTRO)", "Parking suspension", "Drone permission", "Police / traffic management", "Listed building / heritage", "Other"] },
+      { key: "permitNo", label: "Permit / reference no." },
+      { key: "fee", label: "Fee", type: "number" },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "applied", label: "Applied", type: "date" },
+      { key: "expires", label: "Valid until", type: "date", list: true },
+      { key: "notes", label: "Conditions / notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: STATUS.permit, default: "Not started" },
+    ],
+  },
+  assessments: {
+    key: "assessments", title: "Site Assessments", singular: "assessment", titleKey: "location", statusKey: "status",
+    blurb: "How suitable each location is for production: access, power, sound, heritage limits and health & safety.",
+    fields: [
+      { key: "location", label: "Location", ref: "locations", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "assessedOn", label: "Assessed on", type: "date", list: true, default: "today" },
+      { key: "assessor", label: "Assessed by" },
+      { key: "category", label: "Category", type: "select", options: ["Theatre / cinema", "Museum / gallery", "Heritage / listed", "London location", "Country house / estate", "Other"] },
+      { key: "listedGrade", label: "Listed grade", type: "select", options: ["Not listed", "Grade I", "Grade II*", "Grade II"], section: "Suitability" },
+      { key: "access", label: "Access & loading", type: "select", options: ["Easy", "Restricted", "Difficult"] },
+      { key: "power", label: "Power", type: "select", options: ["Mains is enough", "Generator needed", "None"] },
+      { key: "soundLevel", label: "Noise / sound", type: "select", options: ["Quiet", "Some noise", "Noisy"] },
+      { key: "riskLevel", label: "Health & safety risk", type: "select", list: true, options: ["Low", "Medium", "High"], section: "Safety" },
+      { key: "hazards", label: "Hazards and controls", type: "textarea" },
+      { key: "photosTaken", label: "Photos taken", type: "select", options: YESNO },
+      { key: "notes", label: "Findings / notes", type: "textarea", section: "Notes" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Draft", "Completed", "Needs follow-up", "Approved for filming"], default: "Draft" },
+    ],
+  },
+  shortlists: {
+    key: "shortlists", title: "Shortlists & Packs", singular: "shortlist", titleKey: "title", statusKey: "status",
+    blurb: "Location packs put together for a production, from first draft to the one they choose.",
+    fields: [
+      { key: "title", label: "Pack title", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "enquiry", label: "Enquiry", ref: "enquiries" },
+      { key: "locations", label: "Locations in the pack", type: "textarea", help: "One per line, or comma separated." },
+      { key: "sentOn", label: "Sent on", type: "date", list: true },
+      { key: "chosen", label: "Location chosen", ref: "locations", list: true },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Draft", "Sent", "Viewed", "Chosen", "Closed"], default: "Draft" },
+    ],
+  },
+  insurance: {
+    key: "insurance", title: "Insurance & Certificates", singular: "certificate", titleKey: "title", statusKey: "status", money: "cover",
+    blurb: "Public liability and other cover from productions and owners, with expiry dates.",
+    fields: [
+      { key: "title", label: "Certificate", required: true, list: true },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "booking", label: "Booking", ref: "bookings" },
+      { key: "kind", label: "Type", type: "select", options: ["Public liability", "Employers liability", "Production insurance", "Owner's buildings cover", "Other"] },
+      { key: "insurer", label: "Insurer" },
+      { key: "policyNo", label: "Policy no." },
+      { key: "cover", label: "Cover amount", type: "number", list: true },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "validFrom", label: "Valid from", type: "date" },
+      { key: "expires", label: "Valid until", type: "date", list: true },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Requested", "Received", "Expired", "Not needed"], default: "Requested" },
+    ],
+  },
+  payments: {
+    key: "payments", title: "Payments & Deposits", singular: "payment", titleKey: "ref", statusKey: "status", money: "amount",
+    blurb: "Money in and out: fees, security deposits, refunds and payouts to owners.",
+    fields: [
+      { key: "ref", label: "Reference", required: true, list: true },
+      { key: "kind", label: "Type", type: "select", list: true, options: ["Location fee", "Security deposit", "Deposit refund", "Owner payout"] },
+      { key: "production", label: "Production", ref: "productions", list: true },
+      { key: "booking", label: "Booking", ref: "bookings" },
+      { key: "invoice", label: "Invoice", ref: "invoices" },
+      { key: "owner", label: "Owner / payee", ref: "owners" },
+      { key: "amount", label: "Amount", type: "number", list: true, section: "Money" },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "date", label: "Date", type: "date", list: true, default: "today" },
+      { key: "method", label: "Method", type: "select", options: ["Bank transfer", "Card", "Cash", "Cheque", "Other"] },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Due", "Received", "Refunded", "Paid out"], default: "Due" },
+    ],
+  },
+  registrations: {
+    key: "registrations", title: "Location Registrations", singular: "registration", titleKey: "property", statusKey: "status",
+    blurb: "Owners who want their property listed: from first contact to photographed and live.",
+    fields: [
+      { key: "property", label: "Property / venue", required: true, list: true },
+      { key: "type", label: "Type", type: "select", list: true, options: LOC_TYPES },
+      { key: "contactName", label: "Contact person", list: true, section: "Contact" },
+      { key: "email", label: "Email", type: "email" },
+      { key: "phone", label: "Phone", type: "tel" },
+      { key: "area", label: "Borough / county", section: "Property" },
+      { key: "postcode", label: "Postcode" },
+      { key: "website", label: "Website", type: "url" },
+      { key: "source", label: "How it came in", type: "select", options: ["Website form", "Phone", "Email", "Referral", "Scouted by us", "Other"] },
+      { key: "received", label: "Received", type: "date", list: true, default: "today", section: "Follow-up" },
+      { key: "followUp", label: "Follow up on", type: "date" },
+      { key: "nextStep", label: "Next step" },
+      { key: "listedAs", label: "Listed as location", ref: "locations", help: "Link the location once it is in the library." },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["New", "Contacted", "Visit booked", "Photographed", "Listed", "Declined"], default: "New" },
+    ],
+  },
+  incidents: {
+    key: "incidents", title: "Incidents & Claims", singular: "incident", titleKey: "title", statusKey: "status", money: "estimatedCost",
+    blurb: "Damage, injuries, complaints and near misses, with insurer and claim progress.",
+    fields: [
+      { key: "title", label: "What happened (short)", required: true, list: true },
+      { key: "kind", label: "Type", type: "select", list: true, options: ["Damage", "Injury", "Complaint", "Near miss", "Noise / neighbour", "Other"] },
+      { key: "severity", label: "Severity", type: "select", list: true, options: ["Minor", "Moderate", "Serious"], default: "Minor" },
+      { key: "date", label: "Date", type: "date", list: true, default: "today" },
+      { key: "location", label: "Location", ref: "locations" },
+      { key: "booking", label: "Booking", ref: "bookings" },
+      { key: "production", label: "Production", ref: "productions" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "estimatedCost", label: "Estimated cost", type: "number", section: "Cost and cover" },
+      { key: "currency", label: "Currency", type: "select", options: CUR, default: "GBP" },
+      { key: "insurerNotified", label: "Insurer notified", type: "select", options: YESNO },
+      { key: "claimRef", label: "Claim reference" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Open", "Investigating", "Claim made", "Settled", "Closed"], default: "Open" },
+    ],
+  },
+  neighbours: {
+    key: "neighbours", title: "Neighbour Notices", singular: "neighbour notice", titleKey: "title", statusKey: "status",
+    blurb: "Letters and visits to residents and businesses near a shoot, and any complaints that follow.",
+    fields: [
+      { key: "title", label: "Notice (e.g. Letter drop, Elm Road)", required: true, list: true },
+      { key: "booking", label: "Booking", ref: "bookings", list: true },
+      { key: "location", label: "Location", ref: "locations" },
+      { key: "street", label: "Streets covered" },
+      { key: "households", label: "Households / businesses", type: "number" },
+      { key: "method", label: "Method", type: "select", options: ["Letter drop", "Door knock", "Email", "Council notice", "Other"] },
+      { key: "sendBy", label: "Send by", type: "date", list: true },
+      { key: "notifiedOn", label: "Sent on", type: "date" },
+      { key: "complaintsReceived", label: "Complaints received", type: "number", default: 0 },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["To do", "Sent", "Complaints", "Cleared"], default: "To do" },
+    ],
+  },
+  tasks: {
+    key: "tasks", title: "Tasks & Follow-ups", singular: "task", titleKey: "title", statusKey: "status",
+    blurb: "Things to do, who does them and when: calls, chasers, visits and paperwork.",
+    fields: [
+      { key: "title", label: "Task", required: true, list: true },
+      { key: "kind", label: "Type", type: "select", options: ["Call", "Email", "Site visit", "Paperwork", "Payment chase", "Other"] },
+      { key: "priority", label: "Priority", type: "select", list: true, options: ["Low", "Normal", "High", "Urgent"], default: "Normal" },
+      { key: "due", label: "Due", type: "date", list: true },
+      { key: "assignedTo", label: "Assigned to", list: true },
+      { key: "production", label: "Production", ref: "productions" },
+      { key: "location", label: "Location", ref: "locations" },
+      { key: "enquiry", label: "Enquiry", ref: "enquiries" },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "status", label: "Status", type: "select", list: true, options: ["Open", "In progress", "Done", "Cancelled"], default: "Open" },
+    ],
+  },
+};
+
+export const MODULE_ORDER = Object.keys(MODULES) as TflKey[];
+
+/** A new workspace starts empty: no sample records. */
+export function seed(): Record<TflKey, TflRecord[]> {
+  return Object.fromEntries(MODULE_ORDER.map((k) => [k, [] as TflRecord[]])) as Record<TflKey, TflRecord[]>;
+}

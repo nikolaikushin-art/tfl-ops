@@ -1,0 +1,40 @@
+/* The Film Location CRM — v84. Module-page audit: no loose cards, bordered boxes or spreadsheet tables.
+   Loaded last. */
+
+/* ---- every remaining card is the same inset panel as the lists -------------- */
+main .brand-card {
+  border-radius: 18px; border: 0;
+  box-shadow: var(--ring), var(--card-shadow);
+}
+:root[data-theme="dark"] main .brand-card { box-shadow: 0 0 0 1px rgb(var(--divider)); }
+@media (max-width: 639px) { main .brand-card { border-radius: 16px; } }
+
+/* ---- inner boxes: soft fill, no outline ------------------------------------- */
+main .rounded-xl.bg-elevated, main .rounded-2xl.bg-elevated, main .rounded-lg.bg-elevated {
+  border-radius: 14px; background: rgb(var(--fill-primary) / var(--fill-opacity-1)); border: 0;
+}
+main .rounded-xl.border.border-divider, main .rounded-2xl.border.border-divider {
+  border: 0; border-radius: 14px; box-shadow: 0 0 0 .5px var(--hair);
+}
+main button.rounded-full.border.border-divider, main a.rounded-full.border.border-divider {
+  border: 0; background: rgb(var(--fill-primary) / var(--fill-opacity-1));
+}
+@media (hover: hover) {
+  main button.rounded-full.border.border-divider:hover { background: rgb(var(--fill-primary) / calc(var(--fill-opacity-1) * 1.6)); }
+}
+
+/* ---- small uppercase tracked labels become quiet sentence-case headings ----- */
+main [class*="uppercase"][class*="tracking-"], main .ios-section-label {
+  text-transform: none; letter-spacing: -.004em; font-size: 13px; font-weight: 600;
+  color: rgb(var(--text-secondary));
+}
+main .ios-section-label { padding-inline: 4px; }
+
+/* ---- a list panel always has air above the next block ----------------------- */
+main .ios-list + .ios-list, main .ios-list + section, main section + .ios-list { margin-top: 16px; }
+main .ios-list .ios-list { box-shadow: none; border-radius: 0; }
+.ios-li input[type="checkbox"] { width: 20px; height: 20px; accent-color: rgb(var(--accent)); }
+.ios-li-sub svg { flex-shrink: 0; }
+
+/* ---- tables that must stay tables (printed invoice, exports) ----------------- */
+main table tbody tr { border-color: var(--hair); }

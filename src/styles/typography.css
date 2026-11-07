@@ -1,0 +1,93 @@
+/*
+ * TFL typography (v57) — one family (Inter variable, bundled in /public/fonts so it works offline),
+ * one type scale, tabular numbers for money / quantities / dates, one uppercase label style.
+ * The "display" voice for page titles is the same family at a heavier weight with tighter tracking
+ * (no second font file is bundled, so there is nothing to fetch from a CDN).
+ */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-var.woff2") format("woff2-variations"), url("/fonts/inter-var.woff2") format("woff2");
+}
+
+:root {
+  /* scale */
+  --fs-display: 28px;   /* page titles */
+  --fs-title: 20px;     /* panel / card titles */
+  --fs-section: 11px;   /* uppercase section + sidebar group labels */
+  --fs-body: 15px;      /* body, form fields, list rows */
+  --fs-table: 14px;     /* table cells */
+  --fs-caption: 12px;   /* captions, hints, meta (never below 12px) */
+  /* weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-display: 700;
+  /* line-height + tracking */
+  --lh-tight: 1.2;
+  --lh-body: 1.5;
+  --lh-table: 1.4;
+  --ls-display: -0.025em;
+  --ls-title: -0.015em;
+  --ls-label: 0.09em;
+}
+
+html { font-optical-sizing: auto; }
+
+body {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-regular);
+  /* phones: stop iOS inflating text after rotation */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Page titles */
+h1, .text-display {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-display);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
+}
+h2 { font-weight: var(--fw-semibold); line-height: var(--lh-tight); letter-spacing: var(--ls-title); }
+h3, h4 { font-weight: var(--fw-semibold); line-height: var(--lh-tight); letter-spacing: var(--ls-title); }
+
+/* Section labels + sidebar group labels: same uppercase, letter-spaced style */
+.mnav-label,
+.rs-group-label,
+.settings-list-label,
+.text-label {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  line-height: 1.3;
+}
+
+/* Tables */
+table { font-size: var(--fs-table); line-height: var(--lh-table); }
+th { font-weight: var(--fw-semibold); }
+th, td { font-variant-numeric: tabular-nums; }
+
+/* Tabular numbers: money, quantities, dates, counters, form inputs */
+.tnum, .tabular-nums, .money, .stat-value,
+input[type="number"], input[type="date"], input[type="datetime-local"], input[type="time"],
+.text-right, [class*="text-right"], time, .mnav-count, .rs-count, .tbar-status {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "cv11" 1, "ss01" 1;
+}
+
+/* Floor for tiny text so nothing is clipped or unreadable on phones */
+@media (max-width: 640px) {
+  .text-\[10px\], .text-\[10\.5px\], .text-\[11px\] { font-size: var(--fs-caption) !important; }
+  .text-\[11px\].uppercase, .mnav-label, .text-label { font-size: 11px !important; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px !important; } /* prevents iOS zoom-on-focus */
+}
+
+/* Dark theme: slightly heavier body weight offsets light-on-dark thinning */
+[data-theme="dark"] body { font-weight: 420; }
+[data-theme="dark"] h1, [data-theme="dark"] .text-display { letter-spacing: -0.02em; }

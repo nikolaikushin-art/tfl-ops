@@ -1,0 +1,134 @@
+/* Module card — port of unique-ops .lp-shell / .lp-panel / .lp-head / .lp-icon-btn.
+   [second sidebar | header (panel toggle, title, actions) + page] in ONE rounded card. */
+.rs-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; background: rgb(var(--canvas)); }
+.rs-shell {
+  --rs-w: 248px;
+  position: relative; flex: 1; min-height: 0; display: grid; grid-template-columns: var(--rs-w) minmax(0, 1fr);
+  background: rgb(var(--canvas)); overflow: hidden; transition: grid-template-columns .2s ease;
+}
+.rs-shell.rs-noside { grid-template-columns: minmax(0, 1fr); }
+.rs-shell.is-side-collapsed { --rs-w: 64px; }
+.rs-panel { position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.rs-panel--side { background: rgb(var(--side-bg)); border-right: 1px solid rgb(var(--divider)); }
+.rs-panel--side .mside { width: 100%; border-right: 0; background: transparent; }
+.rs-panel--main { background: rgb(var(--canvas)); }
+.rs-scroll { background: rgb(var(--canvas)); }
+
+/* desktop: the card floats on the page, 16/20px from the edges */
+@media (min-width: 1024px) {
+  .rs-stage.has-card { padding: 16px 20px; }
+  .rs-stage.has-card .rs-shell {
+    border: 1px solid rgb(var(--divider)); border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 14px 40px -18px rgba(0,0,0,.35);
+  }
+}
+
+/* header inside the card */
+.rs-head {
+  flex: none; align-items: center; gap: 10px; min-height: 56px; padding: 10px 16px; min-width: 0;
+  background: rgb(var(--surface) / .86); border-bottom: 1px solid rgb(var(--divider));
+  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+}
+.rs-head-title { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.rs-head-title b { font-size: 17px; font-weight: 700; letter-spacing: -.015em; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgb(var(--text-primary)); }
+.rs-head-title span { margin-top: 1px; font-size: 12.5px; color: rgb(var(--text-secondary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rs-head-actions { display: flex; align-items: center; gap: 6px; flex: none; }
+.rs-icon-btn {
+  display: inline-grid; place-items: center; width: 34px; height: 34px; padding: 0; flex: none;
+  border: 0; border-radius: 9px; background: transparent; color: rgb(var(--text-secondary)); cursor: pointer;
+  transition: background .12s, color .12s, transform .12s;
+}
+.rs-icon-btn:hover { background: rgb(var(--side-hover)); color: rgb(var(--text-primary)); }
+.rs-icon-btn:active { transform: scale(.94); }
+.rs-icon-btn[aria-pressed="true"] { color: rgb(var(--accent)); }
+.rs-icon-btn:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 1px; }
+:root[data-theme="dark"] .rs-icon-btn[aria-pressed="true"] { color: rgb(var(--text-primary)); }
+
+/* phones/tablets: no card, single column (sidebar is the drawer) */
+@media (max-width: 1023px) {
+  .rs-shell, .rs-shell.is-side-collapsed { grid-template-columns: minmax(0, 1fr); }
+  .rs-panel--side { display: none; }
+}
+
+/* AI launcher — same ring + tile as unique-ops .aic-fab, in TFL's navy accent */
+.ai-fab {
+  right: 22px; bottom: 22px; width: 60px; height: 60px; border-radius: 22px; padding: 0;
+  border: 1px solid rgb(var(--text-primary) / .1); color: #fff;
+  background: rgb(var(--surface) / .82); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: 0 18px 36px -16px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.06) inset;
+  transition: transform .28s cubic-bezier(.22,.8,.3,1), box-shadow .28s, border-color .2s;
+}
+.ai-fab-tile {
+  width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center;
+  background: linear-gradient(145deg, rgb(var(--accent-fill) / .82), rgb(var(--accent-deep)));
+  box-shadow: 0 8px 16px -8px rgb(var(--accent-fill) / .8), 0 1px 0 rgba(255,255,255,.3) inset;
+}
+@media (hover: hover) { .ai-fab:hover { transform: translateY(-3px); border-color: rgb(var(--accent) / .5); box-shadow: 0 22px 40px -16px rgb(var(--accent) / .5), 0 1px 0 rgba(255,255,255,.06) inset; } }
+.ai-fab:active { transform: scale(.96); }
+.ai-fab:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 3px; }
+@media (max-width: 1023px) { .ai-fab { width: 40px; height: 40px; opacity: .55; transition: opacity .15s; border-radius: 16px; right: 10px; bottom: calc(74px + env(safe-area-inset-bottom, 0px)); } .ai-fab-tile { width: 28px; height: 28px; border-radius: 10px; } .ai-fab:active, .ai-fab:focus-visible { opacity: 1; } }
+
+/* ───────── Phone: top bar + module sidebar sheet (same pattern as unique-ops) ───────── */
+.rs-mhead {
+  flex: none; background: rgb(var(--surface) / .92); border-bottom: 1px solid rgb(var(--divider));
+  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+}
+.rs-mhead-row { display: flex; align-items: center; gap: 4px; height: 52px; padding: 0 8px; }
+.rs-mhead-title { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 4px; }
+.rs-mhead-title b { font-size: 17px; font-weight: 700; letter-spacing: -.015em; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgb(var(--text-primary)); }
+.rs-mhead-title span { margin-top: 1px; font-size: 12px; line-height: 1.2; color: rgb(var(--text-secondary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rs-icon-btn--lg { width: 40px; height: 40px; border-radius: 11px; }
+.rs-icon-btn--lg[aria-expanded="true"] { color: rgb(var(--accent)); }
+
+.msheet-backdrop { position: fixed; inset: 0; z-index: 65; border: 0; padding: 0; background: rgba(0, 0, 0, .5); animation: msheet-fade .18s ease both; }
+.msheet {
+  position: fixed; left: 0; top: 0; z-index: 70; width: min(86vw, 340px);
+  bottom: calc(var(--mbn-h, 56px) + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; min-height: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: rgb(var(--side-bg)); border-right: 1px solid rgb(var(--divider));
+  border-radius: 0 18px 18px 0; overflow: hidden;
+  box-shadow: 0 0 60px rgba(0, 0, 0, .45);
+  animation: msheet-in .24s cubic-bezier(.22, .8, .3, 1) both;
+}
+.msheet-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 48px; padding: 0 8px 0 18px; border-bottom: 1px solid rgb(var(--divider)); }
+.msheet-head b { font-size: 16px; font-weight: 700; letter-spacing: -.01em; color: rgb(var(--text-primary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msheet-body { flex: 1; min-height: 0; display: flex; }
+.msheet-body .mside { width: 100%; border-right: 0; background: transparent; }
+.msheet .mside-nav { min-height: 46px; font-size: 15.5px; }
+.msheet .mside-new { min-height: 46px; font-size: 15.5px; }
+.msheet .mside-settings { min-height: 48px; }
+@keyframes msheet-in { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes msheet-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .msheet, .msheet-backdrop { animation: none; } }
+:root[data-ms-motion="0"] .msheet, [data-ms-motion="0"] .msheet, [data-ms-motion="0"] .msheet-backdrop { animation: none; }
+
+/* ───────── Dashboard v59: KPI strip + overlap-proof tiles ───────── */
+.dash-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1023px) { .dash-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.dash-kpi {
+  display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 16px 18px; text-align: left; cursor: pointer;
+  border: 1px solid rgb(var(--divider)); border-radius: 18px; overflow: hidden;
+  background: linear-gradient(160deg, rgb(var(--surface)) 0%, rgb(var(--surface-elevated, var(--surface))) 100%);
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.dash-kpi:hover { transform: translateY(-2px); border-color: rgb(var(--accent) / .45); box-shadow: 0 14px 28px -18px rgb(var(--accent-fill) / .55); }
+.dash-kpi-l { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: rgb(var(--text-tertiary)); }
+.dash-kpi-v { font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; letter-spacing: -.025em; line-height: 1.1; font-variant-numeric: tabular-nums; color: rgb(var(--text-primary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-kpi-n { font-size: 12.5px; color: rgb(var(--text-secondary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-tile { position: relative; isolation: isolate; }
+.dash-tile ul li { min-width: 0; gap: 8px; }
+.dash-tile ul li > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-tile ul li > span:last-child { flex: none; font-variant-numeric: tabular-nums; }
+
+/* ───────── Overlap safety net for every dashboard / overview ───────── */
+.grid > *, .brand-card, .flex > .min-w-0 { min-width: 0; }
+[class*="text-[26px]"], [class*="text-[28px]"], [class*="text-[34px]"], [class*="text-[40px]"] { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  h1[class*="text-[34px]"], h1[class*="text-[28px]"] { font-size: 26px; line-height: 1.1; }
+  [class*="text-[34px]"]:not(h1), [class*="text-[40px]"] { font-size: 28px; }
+}
+.brand-card table { max-width: 100%; }
+.brand-card .overflow-x-auto, .brand-card [class*="overflow-x"] { max-width: 100%; }
+.msheet .mside-foot { padding-bottom: 10px; }
+.msheet .mside-title { display: none; }

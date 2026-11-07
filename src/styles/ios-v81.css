@@ -1,0 +1,117 @@
+/* The Film Location CRM — v81 Apple-style pass over every module.
+   Tokens only (no new palette). One radius scale: 10 controls / 14 rows / 18 cards.
+   Cards sit on the canvas with a hairline ring and a whisper of shadow in light mode;
+   dark mode keeps the hairline and drops the shadow. */
+
+:root { --r-ctl: 10px; --r-card: 18px; --ring: 0 0 0 .5px rgb(var(--separator) / .22); }
+:root, :root[data-theme="dark"] { --card-shadow: none; }
+:root[data-theme="light"] { --card-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 4px 16px rgb(0 0 0 / .035); }
+
+/* ---- cards ---------------------------------------------------------------- */
+main .brand-card,
+main .tfl-card,
+main .ios-group {
+  border-radius: var(--r-card);
+  border: 0;
+  box-shadow: var(--ring), var(--card-shadow);
+  background-color: rgb(var(--surface));
+}
+:root[data-theme="dark"] main .brand-card,
+:root[data-theme="dark"] main .tfl-card,
+:root[data-theme="dark"] main .ios-group { box-shadow: 0 0 0 1px rgb(var(--divider)); }
+
+main section.brand-card { padding: 22px 24px; }
+@media (max-width: 767px) { main section.brand-card { padding: 16px; } main .brand-card, main .ios-group { border-radius: 16px; } }
+
+/* secondary containers built from utilities */
+main .rounded-xl.border.border-divider:not(button):not(input):not(select):not(textarea),
+main .rounded-control.border.border-divider:not(button):not(input):not(select):not(textarea) {
+  border-radius: 14px;
+  border-color: rgb(var(--separator) / .22);
+}
+
+/* ---- headings ------------------------------------------------------------- */
+main .ios-large-title { font-size: 34px; font-weight: 700; letter-spacing: -.032em; }
+main .ios-h2 { font-size: 17px; font-weight: 600; letter-spacing: -.016em; line-height: 1.25; }
+main .brand-card h2, main section > h2 { font-size: 17px; font-weight: 600; letter-spacing: -.016em; }
+main h3 { letter-spacing: -.012em; }
+
+/* ---- stat tiles ----------------------------------------------------------- */
+.ios-tile { transition: transform .18s ease, box-shadow .18s ease; }
+.ios-tile-label { font-size: 13px; font-weight: 500; color: rgb(var(--text-secondary)); letter-spacing: -.006em; }
+.ios-tile .tnum, .ios-tile .tabular-nums, .ios-tile .font-bold { font-variant-numeric: tabular-nums; font-feature-settings: "tnum", "ss01"; }
+.ios-tile .font-bold { font-weight: 650; letter-spacing: -.026em; }
+
+/* ---- buttons -------------------------------------------------------------- */
+.ios-btn,
+main button.border.border-divider:not(.ios-btn) {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 34px; padding: 0 14px; border-radius: 999px;
+  border: 0 !important; font-size: 13px; font-weight: 600; letter-spacing: -.008em;
+  color: rgb(var(--text-primary));
+  background: rgb(var(--fill-primary) / var(--fill-opacity-1));
+  transition: background-color .14s ease, transform .12s ease, opacity .14s ease;
+}
+.ios-btn:hover, main button.border.border-divider:hover { background: rgb(var(--fill-primary) / calc(var(--fill-opacity-1) + .06)); }
+.ios-btn:active, main button.border.border-divider:active { transform: scale(.97); }
+main button.rounded-full.border-divider.border-dashed { background: transparent; border: 1px dashed rgb(var(--separator) / .4) !important; }
+main button:disabled { opacity: .45; }
+
+/* filled primary buttons: iOS tinted-fill pill */
+main button.bg-\[rgb\(var\(--accent-fill\)\)\].text-white { font-weight: 600; letter-spacing: -.008em; transition: transform .12s ease, filter .14s ease; }
+main button.bg-\[rgb\(var\(--accent-fill\)\)\].text-white:hover { filter: brightness(1.08); }
+main button.bg-\[rgb\(var\(--accent-fill\)\)\].text-white:active { transform: scale(.97); }
+
+/* ---- segmented control ---------------------------------------------------- */
+.ios-segment { padding: 3px; border-radius: 11px; gap: 0; background: rgb(var(--fill-primary) / var(--fill-opacity-1)); }
+.ios-segment-item { padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+.ios-segment-item[data-active="true"] { font-weight: 600; box-shadow: 0 1px 1px rgb(0 0 0 / .08), 0 3px 8px rgb(0 0 0 / .12), 0 0 0 .5px rgb(0 0 0 / .04); }
+:root[data-theme="dark"] .ios-segment-item[data-active="true"] { background: rgb(var(--surface-elevated)); }
+
+/* ---- tables --------------------------------------------------------------- */
+main .brand-card > table, main .brand-card table { width: 100%; }
+main table thead th { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgb(var(--text-tertiary)); white-space: nowrap; }
+main table th[class], main table td[class] { padding: 13px 16px; vertical-align: middle; }
+main table th:first-child[class], main table td:first-child[class] { padding-left: 20px; }
+main table thead tr { border-bottom: 1px solid rgb(var(--separator) / var(--separator-opacity)) !important; }
+main table tbody tr { border-top: 1px solid rgb(var(--separator) / calc(var(--separator-opacity) * .7)); border-bottom: 0 !important; transition: background-color .12s ease; }
+main table tbody tr:first-child { border-top: 0; }
+main table td { font-variant-numeric: tabular-nums; }
+main table tbody tr.cursor-pointer:active { background-color: rgb(var(--fill-primary) / var(--fill-opacity-1)); }
+main table td[colspan] { color: rgb(var(--text-tertiary)); padding: 36px 16px; }
+
+/* grid-style breakdown rows (Reports, Markets): same rhythm as table rows */
+.ios-th { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgb(var(--text-tertiary)); border-color: rgb(var(--separator) / var(--separator-opacity)) !important; }
+main .divide-y > * + * { border-color: rgb(var(--separator) / calc(var(--separator-opacity) * .7)); }
+
+/* ---- trend bars ----------------------------------------------------------- */
+.ios-bar { border-radius: 7px 7px 3px 3px; background: linear-gradient(180deg, rgb(var(--accent-fill)) 0%, rgb(var(--accent-fill) / .72) 100%); transition: height .5s cubic-bezier(.2,.8,.2,1), opacity .2s; }
+.ios-bar:hover { filter: brightness(1.12); }
+
+/* ---- fields --------------------------------------------------------------- */
+main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+main select, main textarea {
+  border-radius: var(--r-ctl);
+  border-color: rgb(var(--separator) / .25);
+  background-color: rgb(var(--fill-primary) / var(--fill-opacity-2));
+  transition: box-shadow .14s ease, background-color .14s ease, border-color .14s ease;
+}
+main input:focus:not([type="checkbox"]):not([type="radio"]), main select:focus, main textarea:focus {
+  outline: none; border-color: rgb(var(--accent) / .55);
+  box-shadow: 0 0 0 4px rgb(var(--accent) / .14); background-color: rgb(var(--surface));
+}
+main input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid rgb(var(--text-tertiary) / .7); background: transparent; display: inline-grid; place-content: center; vertical-align: middle; cursor: pointer; transition: background-color .14s, border-color .14s, transform .1s; }
+main input[type="checkbox"]:checked { background: rgb(var(--accent-fill)); border-color: rgb(var(--accent-fill)); }
+main input[type="checkbox"]:checked::after { content: ""; width: 9px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: translateY(-1px) rotate(-45deg); }
+main input[type="checkbox"]:active { transform: scale(.9); }
+
+/* ---- pills ---------------------------------------------------------------- */
+.ios-pill { padding: 3px 10px; font-size: 12px; letter-spacing: -.004em; }
+
+/* ---- touches -------------------------------------------------------------- */
+main .brand-card .text-\[12px\].text-ink-secondary, main .brand-card .text-\[11px\].text-ink-tertiary { letter-spacing: 0; }
+main ::-webkit-scrollbar { height: 8px; width: 8px; }
+main ::-webkit-scrollbar-thumb { background: rgb(var(--fill-primary) / .35); border-radius: 999px; }
+main ::-webkit-scrollbar-track { background: transparent; }
+@media (prefers-reduced-motion: reduce) { .ios-tile, .ios-bar, .ios-btn { transition: none !important; } }
+@media (hover: hover) { .ios-tile:hover { box-shadow: var(--ring), 0 6px 22px rgb(0 0 0 / .08); } }

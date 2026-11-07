@@ -1,0 +1,59 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "clsx": [
+        "./tsshim/clsx.d.ts"
+      ],
+      "tailwind-merge": [
+        "./tsshim/twmerge.d.ts"
+      ],
+      "vitest": [
+        "./tsshim/vitest.d.ts"
+      ]
+    },
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "types": []
+  },
+  "files": [
+    "src/lib/bondLines.test.ts",
+    "src/lib/bondLines.ts",
+    "src/lib/commsAnalytics.ts",
+    "src/lib/dealFolder.ts",
+    "src/lib/documents.test.ts",
+    "src/lib/documents.ts",
+    "src/lib/domain.ts",
+    "src/lib/extraction.test.ts",
+    "src/lib/extraction.ts",
+    "src/lib/format.ts",
+    "src/lib/fulfilment.ts",
+    "src/lib/fx.ts",
+    "src/lib/intelligence.test.ts",
+    "src/lib/library.test.ts",
+    "src/lib/library.ts",
+    "src/lib/lines.test.ts",
+    "src/lib/lines.ts",
+    "src/lib/margin.ts",
+    "src/lib/parties.ts",
+    "src/lib/priceIndex.ts",
+    "src/lib/seed.ts",
+    "src/lib/signals.ts",
+    "src/lib/spotlight.test.ts",
+    "src/lib/spotlight.ts",
+    "src/lib/storage.ts",
+    "src/lib/utils.ts"
+  ]
+}

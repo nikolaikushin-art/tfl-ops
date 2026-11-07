@@ -1,0 +1,32 @@
+/* The Film Location CRM — v83. Clean-up pass: one look for every summary strip and list.
+   Loaded last. */
+
+/* ---- summary strips: values line up even when a label wraps ---------------- */
+.ios-stat-label { align-items: flex-start; }
+.ios-stat-hint { margin-top: auto; padding-top: 4px; }
+@media (min-width: 900px) {
+  .ios-stats:not(.ios-stats-flat) .ios-stat-label { min-height: 2.7em; }
+}
+.ios-stat .flex-col { gap: 0; }
+.ios-stat [class*="text-[12px]"] { margin-top: 4px; line-height: 1.4; }
+
+/* 6-up strip (Dashboard) */
+@media (min-width: 640px) {
+  .ios-stats[data-n="6"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ios-stats[data-n="6"] > :last-child:nth-child(odd) { grid-column: auto; }
+}
+@media (min-width: 1100px) {
+  .ios-stats[data-n="6"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+.ios-stats[data-n="6"] .ios-stat-value { font-size: 22px; }
+
+/* a strip inside a card: no second card edge, just a hairline frame */
+.brand-card .ios-stats { border-radius: 14px; box-shadow: 0 0 0 .5px var(--hair); }
+.ios-stats-flat .ios-stat { padding: 12px 14px; gap: 2px; }
+
+/* ---- rows inside cards: square separators, no rounded outlines ------------- */
+main .divide-y > * { border-radius: 0; }
+main .divide-y > [role="button"], main .divide-y > button { margin: 0; }
+@media (hover: hover) {
+  main .divide-y > [role="button"]:hover { background: rgb(var(--fill-primary) / calc(var(--fill-opacity-1) * .5)); }
+}

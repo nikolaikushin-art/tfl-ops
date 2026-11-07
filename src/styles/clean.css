@@ -1,0 +1,179 @@
+/* ───────────────────────── Clean layer (v64) ─────────────────────────
+   Loaded last. Three jobs: nothing scrolls sideways on a phone, one page rhythm for every module,
+   and the Dashboard. Colours come from the existing tokens, so light and dark both work. */
+
+/* ── One rhythm for every page ───────────────────────────────────── */
+.ms-scope h1.rt-dup { display: none; }
+.ms-scope h1 { font-size: clamp(22px, 3vw, 28px); line-height: 1.15; letter-spacing: -.02em; }
+.ms-scope { overflow-x: hidden; }
+.ms-scope img, .ms-scope svg, .ms-scope video { max-width: 100%; }
+
+/* ── Phones: tables become stacked cards (labels come from lib/pageEnhance) ─── */
+@media (max-width: 767px) {
+  /* the scroll wrapper stops being a box of its own */
+  .ms-scope :is(.overflow-x-auto, [class*="overflow-x"]):has(> table[data-rt]) {
+    overflow: visible; border: 0; background: transparent; box-shadow: none; padding: 0; border-radius: 0;
+  }
+  .ms-scope table[data-rt] { min-width: 0 !important; width: 100%; display: block; border: 0; }
+  .ms-scope table[data-rt] :is(thead) { display: none; }
+  .ms-scope table[data-rt] :is(tbody, tfoot) { display: block; }
+  .ms-scope table[data-rt] tr {
+    display: block; margin: 0 0 10px; padding: 12px 14px; border: 0 !important; border-radius: 14px;
+    background: rgb(var(--surface-elevated) / .55);
+  }
+  .ms-scope table[data-rt] :is(td, th) {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+    min-width: 0; padding: 4px 0 !important; border: 0 !important; text-align: right !important;
+    white-space: normal; overflow-wrap: anywhere; font-size: 13px;
+    /* views.css caps table cells at 220px; inside a stacked card that left a dead strip on the right
+       and made values wrap early. In a card every cell may use the full card width. */
+    max-width: none; width: auto; overflow: visible; text-overflow: clip;
+  }
+  .ms-scope table[data-rt] :is(td, th)::before {
+    content: attr(data-label); flex: none; max-width: 44%; text-align: left;
+    font-size: 12px; font-weight: 500; color: rgb(var(--text-secondary));
+  }
+  .ms-scope table[data-rt] :is(td, th)[data-label=""]::before { display: none; }
+  /* first cell is the row's title */
+  .ms-scope table[data-rt] tr > :is(td, th):first-child {
+    justify-content: flex-start; text-align: left !important; font-size: 14.5px; font-weight: 600;
+    padding-bottom: 8px !important; margin-bottom: 4px; border-bottom: 1px solid rgb(var(--divider)) !important;
+  }
+  .ms-scope table[data-rt] tr > :is(td, th):first-child::before { display: none; }
+  /* a checkbox column should not become a title row */
+  .ms-scope table[data-rt] tr > td:first-child:has(> input[type="checkbox"]) { display: none; }
+  .ms-scope table[data-rt] tr[class*="cursor-pointer"], .ms-scope table[data-rt] tr[role="button"] { cursor: pointer; }
+}
+
+/* ── Dashboard ───────────────────────────────────────────────────── */
+.db { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.db > * { min-width: 0; }
+
+/* the four numbers: one card, hairline dividers, no boxes inside boxes */
+.db-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: hidden; padding: 0; }
+.db-stat {
+  display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 14px 12px; text-align: left;
+  border: 0; background: transparent; cursor: pointer; transition: background .12s;
+  overflow: hidden;
+}
+.db-stat:hover { background: rgb(var(--surface-elevated) / .5); }
+.db-stat + .db-stat { border-left: 1px solid rgb(var(--divider)); }
+.db-stat-l {
+  font-size: 11.5px; font-weight: 500; color: rgb(var(--text-secondary));
+  line-height: 1.25; min-height: 2.5em;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; word-break: break-word;
+}
+.db-stat-v { font-size: clamp(20px, 2.2vw, 26px); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; color: rgb(var(--text-primary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-stat-n { font-size: 11.5px; color: rgb(var(--text-tertiary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 767px) {
+  .db-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .db-stat { padding: 14px 14px; }
+  .db-stat:nth-child(3), .db-stat:nth-child(4) { border-top: 1px solid rgb(var(--divider)); }
+  .db-stat:nth-child(3) { border-left: 0; }
+}
+
+/* layout: one column on phones (queue first), main + side column on desktop */
+.db-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.db-queue { order: 1; } .db-notes { order: 2; } .db-pipe { order: 3; } .db-margin { order: 4; }
+@media (min-width: 1100px) {
+  .db-grid { grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "notes queue" "notes pipe" "notes margin"; align-items: start; }
+  .db-notes { grid-area: notes; } .db-queue { grid-area: queue; } .db-pipe { grid-area: pipe; } .db-margin { grid-area: margin; }
+}
+
+.db-card { padding: 0; overflow: hidden; }
+.db-card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px 6px; }
+.db-card-h h2 { font-size: 15px; font-weight: 650; letter-spacing: -.01em; color: rgb(var(--text-primary)); }
+.db-card-h span, .db-card-h button { font-size: 13px; color: rgb(var(--text-secondary)); }
+.db-card-h button { font-weight: 600; color: rgb(var(--accent)); background: none; border: 0; cursor: pointer; padding: 4px 0; }
+.db-card-b { padding: 6px 18px 18px; }
+
+/* "Waiting on you" rows */
+.db-rows { display: flex; flex-direction: column; padding: 4px 8px 8px; }
+.db-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; padding: 11px 10px; border: 0; border-radius: 12px;
+  background: transparent; text-align: left; cursor: pointer; transition: background .12s;
+}
+.db-row:hover { background: rgb(var(--surface-elevated) / .6); }
+.db-row-i { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 11px; background: rgb(var(--accent) / .1); color: rgb(var(--accent)); }
+.db-row-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.db-row-t b { font-size: 14px; font-weight: 600; color: rgb(var(--text-primary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-row-t span { font-size: 12.5px; color: rgb(var(--text-secondary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-row-n { flex: none; min-width: 28px; height: 26px; padding: 0 9px; display: grid; place-items: center; border-radius: 99px; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; background: rgb(var(--surface-elevated)); color: rgb(var(--text-primary)); }
+.db-row-n[data-on="1"] { background: rgb(var(--accent-fill)); color: #fff; }
+
+/* pipeline */
+.db-stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 5px; align-items: baseline; padding: 7px 0; font-size: 13.5px; }
+.db-stage span { color: rgb(var(--text-secondary)); }
+.db-stage b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.db-stage i { grid-column: 1 / -1; display: block; height: 4px; border-radius: 99px; background: rgb(var(--surface-elevated)); overflow: hidden; }
+.db-stage i::after { content: ""; display: block; height: 100%; width: var(--w, 0%); border-radius: 99px; background: rgb(var(--accent-fill)); }
+.db-sep { height: 1px; margin: 12px 0; background: rgb(var(--divider)); border: 0; }
+.db-money { display: flex; flex-direction: column; gap: 2px; }
+.db-money div { font-size: clamp(20px, 2.2vw, 24px); font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: rgb(var(--text-primary)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-sub { font-size: 12.5px; color: rgb(var(--text-secondary)); }
+.db-refs { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
+.db-refs div { display: flex; justify-content: space-between; gap: 10px; color: rgb(var(--text-secondary)); }
+.db-refs b { font-weight: 600; color: rgb(var(--text-primary)); font-variant-numeric: tabular-nums; }
+
+/* margin */
+.db-bars { display: flex; align-items: flex-end; gap: 6px; height: 56px; margin-top: 14px; }
+.db-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; height: 100%; min-width: 0; }
+.db-bar i { display: block; width: 100%; border-radius: 5px; background: rgb(var(--accent-fill)); min-height: 4px; }
+.db-bar span { font-size: 10.5px; color: rgb(var(--text-tertiary)); line-height: 1; }
+.db-bars-wrap { height: 72px; }
+.db-up { font-size: 12.5px; font-weight: 600; color: rgb(var(--success)); font-variant-numeric: tabular-nums; }
+.db-flat { font-size: 12.5px; font-weight: 500; color: rgb(var(--text-secondary)); }
+.db-seg { margin-top: 14px; }
+
+/* notifications */
+.db-note { display: flex; align-items: center; gap: 4px; padding: 0 8px 0 4px; border-radius: 12px; }
+.db-note:hover { background: rgb(var(--surface-elevated) / .55); }
+.db-note-main { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 12px; padding: 11px 6px 11px 10px; border: 0; background: none; text-align: left; cursor: pointer; }
+.db-dot { flex: none; width: 9px; height: 9px; margin-top: 6px; border-radius: 99px; }
+.db-note-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.db-note-t b { font-size: 14px; font-weight: 600; line-height: 1.3; color: rgb(var(--text-primary)); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.db-note-t span { font-size: 12.5px; line-height: 1.35; color: rgb(var(--text-secondary)); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.db-note-t em { font-style: normal; font-size: 11.5px; color: rgb(var(--text-tertiary)); }
+.db-note-act { flex: none; display: flex; }
+.db-note-act button { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 10px; background: none; color: rgb(var(--text-secondary)); cursor: pointer; }
+.db-note-act button:hover { background: rgb(var(--surface-elevated)); color: rgb(var(--text-primary)); }
+.db-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 36px 16px; text-align: center; }
+.db-empty b { font-size: 15px; } .db-empty span { font-size: 13px; color: rgb(var(--text-secondary)); }
+
+/* buttons default to one line in this app; the notification text must wrap */
+.db-note-main, .db-note-main * { white-space: normal; }
+.db-row-t b, .db-row-t span { white-space: nowrap; }
+@media (max-width: 767px) {
+  /* tables whose first column is a checkbox: the company/name cell is the card title */
+  .ms-scope table[data-rt] tr > td:first-child:has(> input[type="checkbox"]) + :is(td, th) {
+    justify-content: flex-start; text-align: left !important; font-size: 14.5px; font-weight: 600;
+    padding-bottom: 8px !important; margin-bottom: 4px; border-bottom: 1px solid rgb(var(--divider)) !important;
+  }
+  .ms-scope table[data-rt] tr > td:first-child:has(> input[type="checkbox"]) + :is(td, th)::before { display: none; }
+}
+
+/* Six dashboard overview tiles — wrap on narrow screens; labels never spill */
+.db-stats-6 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+}
+.db-stats-6 > .db-stat { min-width: 0; }
+/* Reset adjacent border when tiles wrap to a new row */
+.db-stats-6 > .db-stat { border-left: 1px solid rgb(var(--divider)); border-top: 0; }
+.db-stats-6 > .db-stat:nth-child(2n+1) { border-left: 0; }
+.db-stats-6 > .db-stat:nth-child(n+3) { border-top: 1px solid rgb(var(--divider)); }
+@media (min-width: 720px) {
+  .db-stats-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .db-stats-6 > .db-stat:nth-child(2n+1) { border-left: 1px solid rgb(var(--divider)); }
+  .db-stats-6 > .db-stat:nth-child(3n+1) { border-left: 0; }
+  .db-stats-6 > .db-stat:nth-child(n+4) { border-top: 1px solid rgb(var(--divider)); }
+  .db-stats-6 > .db-stat:nth-child(-n+3) { border-top: 0; }
+}
+@media (min-width: 1100px) {
+  .db-stats-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .db-stats-6 > .db-stat { border-top: 0 !important; border-left: 1px solid rgb(var(--divider)); }
+  .db-stats-6 > .db-stat:first-child { border-left: 0; }
+}

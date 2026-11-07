@@ -1,0 +1,130 @@
+/* Apple-style Contacts · Trade Desk · Deal Desk.
+   Built on the shared iOS kit (ios-list / ios-group / ios-row / ios-pill) so every page that uses it
+   — Requests, Orders, Quotations, Shipments, Products, Stock, Prices, Markets, Brands — gets the same polish. */
+
+/* ── Page header: large title, calm subtitle, actions aligned to the title baseline ── */
+main h1.ios-large-title { font-size: 34px; line-height: 1.08; letter-spacing: -.036em; font-weight: 720; }
+main h1.ios-large-title + p { margin-top: 6px; max-width: 62ch; font-size: 14.5px; line-height: 1.45; color: rgb(var(--text-secondary)); letter-spacing: -.006em; }
+.ap-head { padding-bottom: 4px; gap: 14px; }
+@media (max-width: 767px) { main h1.ios-large-title { font-size: 30px; } }
+
+/* ── Buttons: filled primary = Apple prominent button ── */
+.ap-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 36px; border-radius: 999px !important; padding-inline: 16px;
+  font-size: 13.5px; font-weight: 600; letter-spacing: -.01em;
+  background: rgb(var(--accent-fill)); color: #fff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .14), 0 1px 2px rgb(10 25 50 / .18);
+  transition: transform .12s ease, filter .14s ease, box-shadow .14s ease;
+}
+@media (hover: hover) { .ap-primary:hover:not(:disabled) { filter: brightness(1.1); } }
+.ap-primary:active:not(:disabled) { transform: scale(.97); }
+.ap-primary:disabled { opacity: .45; }
+.ap-primary.rounded-full { min-height: 30px; padding-inline: 13px; font-size: 12.5px; }
+
+/* ── Chips (filters, stages, checklist) — pill, soft fill, selected = filled ── */
+.ap-chips, .ap-chip-row { gap: 8px; }
+.ap-chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 14px;
+  border: 0; border-radius: 999px; font-size: 13px; font-weight: 550; letter-spacing: -.008em; white-space: nowrap;
+  color: rgb(var(--text-secondary)); background: rgb(var(--fill-primary) / .07);
+  transition: background-color .15s ease, color .15s ease, transform .12s ease;
+}
+@media (hover: hover) { .ap-chip:hover:not(.is-on) { background: rgb(var(--fill-primary) / .12); color: rgb(var(--text-primary)); } }
+.ap-chip:active { transform: scale(.96); }
+.ap-chip.is-on { background: rgb(var(--accent-fill)); color: #fff; box-shadow: inset 0 1px 0 rgb(255 255 255 / .12); }
+.ap-chip--saved { background: transparent; box-shadow: inset 0 0 0 1px rgb(var(--divider)); }
+.ap-chips { overflow-x: visible; flex-wrap: wrap; padding-bottom: 2px; }
+.ap-chips::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .ap-chips { flex-wrap: wrap; overflow: visible; } }
+
+/* ── Filter toolbar: one calm bar, search first ── */
+.ap-toolbar {
+  padding: 10px; gap: 8px; border-radius: 18px;
+  background: rgb(var(--surface)); box-shadow: var(--pnl-edge, 0 0 0 .5px rgb(var(--divider))), 0 1px 2px rgb(0 0 0 / .03);
+}
+.ap-toolbar :is(input, select) { height: 40px; border-radius: 12px; border: 0 !important; font-size: 14px; background-color: rgb(var(--fill-primary) / .06) !important; }
+.ap-toolbar :is(input, select):focus { background-color: rgb(var(--surface)) !important; box-shadow: 0 0 0 3px rgb(var(--accent) / .22) !important; }
+.ap-search {
+  padding-left: 38px !important;
+  background-repeat: no-repeat !important; background-position: 13px 50% !important; background-size: 16px 16px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") !important;
+}
+.ap-toolbar .ios-btn { height: 40px; }
+
+/* ── Selection bar: floats like an iOS action bar ── */
+.ap-selbar { position: sticky; top: 8px; z-index: 5; padding: 10px 14px !important; border-radius: 16px !important; -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); background: rgb(var(--surface) / .86) !important; box-shadow: 0 0 0 .5px rgb(var(--divider)), 0 10px 30px -12px rgb(10 25 50 / .35) !important; }
+
+/* ── Callout (waiting for approval): tinted panel, no heavy left bar ── */
+.ap-callout { background: linear-gradient(180deg, rgb(var(--accent-fill) / .07), rgb(var(--accent-fill) / .03)), rgb(var(--surface)) !important; }
+.ap-callout > h2 { display: flex; align-items: center; gap: 8px; }
+.ap-callout > h2::before { content: ""; width: 8px; height: 8px; border-radius: 99px; background: rgb(var(--accent-fill)); box-shadow: 0 0 0 4px rgb(var(--accent-fill) / .16); flex: none; }
+
+/* ── Back link ── */
+.ap-back { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 12px 0 6px; margin-left: -6px; border: 0; border-radius: 999px; background: transparent; font-size: 15px; font-weight: 500; letter-spacing: -.012em; color: rgb(var(--accent)); transition: background-color .14s ease; }
+:root[data-theme="light"]:not([data-nav="dark"]) .ap-back { color: rgb(var(--info)); }
+.ap-back::before { content: ""; width: 9px; height: 9px; margin-left: 4px; border-left: 2.2px solid currentColor; border-bottom: 2.2px solid currentColor; transform: rotate(45deg); border-radius: 1px; }
+@media (hover: hover) { .ap-back:hover { background: rgb(var(--fill-primary) / .07); } }
+
+/* ── Monogram avatar (Contacts-style) ── */
+.ap-avatar {
+  flex: none; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+  font-size: 14px; font-weight: 600; letter-spacing: .01em; color: rgb(var(--text-secondary));
+  background: linear-gradient(180deg, rgb(var(--fill-primary) / .10), rgb(var(--fill-primary) / .05));
+  box-shadow: inset 0 0 0 .5px rgb(var(--divider));
+}
+:root[data-theme="dark"] .ap-avatar { color: rgb(var(--text-primary)); }
+
+/* ── Lists: roomier rows, inset hairlines that start at the text, quiet chevrons ── */
+.ios-list, main .ios-group { border-radius: var(--pnl-radius, 22px); box-shadow: var(--pnl-edge, 0 0 0 .5px rgb(var(--divider))), var(--pnl-depth, none); }
+.ios-li { min-height: 68px; padding: 13px 18px; gap: 14px; }
+.ios-li + .ios-li::before { left: 18px; height: .5px; }
+.ios-li:has(.ap-avatar) + .ios-li::before, .ios-li:has(.ap-avatar)::before { left: 72px; }
+.ios-li:has(.ios-li-lead):has(.ap-avatar) + .ios-li::before { left: 106px; }
+.ios-li-title { font-size: 15.5px; font-weight: 600; letter-spacing: -.014em; }
+.ios-li-sub { font-size: 13px; color: rgb(var(--text-secondary)); }
+.ios-li-num { font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; }
+.ios-li-chev { opacity: .55; transition: transform .16s ease, opacity .16s ease; }
+@media (hover: hover) { .ios-li[role="button"]:hover .ios-li-chev { opacity: .9; transform: translateX(2px); } }
+.ios-list-head { padding: 12px 18px; font-size: 12.5px; font-weight: 500; border-bottom-width: .5px; background: rgb(var(--fill-primary) / .025); }
+.ios-list-empty { padding: 56px 20px; font-size: 14.5px; }
+.ios-list-empty::before { content: ""; display: block; width: 44px; height: 44px; margin: 0 auto 14px; border-radius: 50%; background: rgb(var(--fill-primary) / .06); box-shadow: inset 0 0 0 .5px rgb(var(--divider)); }
+
+/* ── Rows in groups (Requests, Orders, Shipments, Stock …) ── */
+.ios-row { padding: 14px 18px !important; min-height: 60px; }
+.ios-row + .ios-row { border-top-width: .5px; }
+@media (hover: hover) { .ios-row.row-hover:hover { background: rgb(var(--fill-primary) / .045); } }
+.ios-row.row-hover:active { background: rgb(var(--fill-primary) / .08); }
+
+/* ── Section labels ── */
+main .ios-section-label { font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: rgb(var(--text-tertiary)); padding-inline: 6px; }
+
+/* ── Status pills: capsule with a leading dot ── */
+.ios-pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: -.004em; }
+.ios-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .9; flex: none; }
+
+/* ── Stat tiles / strips used on Trade Desk pages ── */
+.ios-stats { border-radius: var(--pnl-radius, 22px); }
+.ios-stat { padding: 18px 20px 16px; }
+.ios-stat-label { font-size: 12.5px; }
+.ios-stat-value { font-size: 28px; font-weight: 680; letter-spacing: -.035em; }
+
+/* ── Segmented control + search field ── */
+.ios-segment { padding: 3px; border-radius: 12px; }
+.ios-segment-item { min-height: 30px; transition: background-color .16s ease, color .16s ease, box-shadow .16s ease; }
+
+/* ── Forms inside deal / contact panels: inset-grouped fields ── */
+main section.brand-card label > span:first-child, main section.brand-card .ios-field-label { font-size: 12px; font-weight: 500; letter-spacing: 0; color: rgb(var(--text-tertiary)); }
+main section.brand-card input:not([type="checkbox"]):not([type="radio"]), main section.brand-card select, main section.brand-card textarea { height: auto; min-height: 42px; border-radius: 12px; border: 0 !important; background-color: rgb(var(--fill-primary) / .06) !important; }
+main section.brand-card textarea { padding-top: 10px; }
+main section.brand-card input:focus, main section.brand-card select:focus, main section.brand-card textarea:focus { background-color: rgb(var(--surface)) !important; box-shadow: 0 0 0 3px rgb(var(--accent) / .22) !important; }
+
+/* ── Sheets & side panels (party panel, pickers) ── */
+[role="dialog"] { border-radius: 24px; box-shadow: 0 0 0 .5px rgb(var(--divider)), 0 30px 80px -24px rgb(0 0 0 / .5); }
+@media (prefers-reduced-motion: no-preference) { [role="dialog"] { animation: pnl-rise .3s cubic-bezier(.22, .8, .3, 1) both; } }
+
+/* ── Twilight / Dark parity ── */
+:root[data-theme="dark"] .ap-toolbar { box-shadow: 0 0 0 .5px rgb(255 255 255 / .09); }
+:root[data-theme="dark"] .ap-chip { background: rgb(255 255 255 / .08); }
+:root[data-theme="dark"] .ap-chip.is-on { background: rgb(var(--accent-fill)); }
+:root[data-theme="dark"] .ios-list-head { background: rgb(255 255 255 / .03); }

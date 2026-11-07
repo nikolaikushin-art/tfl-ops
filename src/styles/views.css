@@ -1,0 +1,90 @@
+/* v99 — List · Table · Pipeline. One view layer for every record module, in the iOS language:
+   segmented control, inset-grouped table, grouped-background columns with raised cards. */
+
+.rv { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.rv-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rv-count { font-size: 13px; font-weight: 500; letter-spacing: -.005em; color: rgb(var(--text-secondary)); }
+
+/* ── Segmented switcher ── */
+.rv-switch { display: inline-flex; padding: 2px; gap: 0; border-radius: 10px; background: rgb(var(--fill-primary) / var(--fill-opacity-1)); flex-shrink: 0; }
+.rv-switch-item { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: rgb(var(--text-secondary)); background: transparent; border: 0; cursor: pointer; transition: background-color .16s ease, color .16s ease, box-shadow .16s ease; -webkit-tap-highlight-color: transparent; }
+.rv-switch-item[data-active="true"] { color: rgb(var(--text-primary)); font-weight: 600; background: rgb(var(--surface)); box-shadow: 0 1px 1px rgb(0 0 0 / .08), 0 3px 8px rgb(0 0 0 / .10), 0 0 0 .5px rgb(0 0 0 / .04); }
+:root[data-theme="dark"] .rv-switch-item[data-active="true"] { background: rgb(var(--surface-elevated)); }
+@media (hover: hover) { .rv-switch-item:not([data-active="true"]):hover { color: rgb(var(--text-primary)); } }
+.rv-switch-item:active { transform: scale(.97); }
+@media (max-width: 420px) { .rv-switch-item { padding: 0 10px; } .rv-switch-item span { font-size: 12.5px; } }
+
+/* ── Table ── */
+.rv-table-wrap { overflow: hidden; max-width: 100%; border-radius: 18px; background: rgb(var(--surface)); box-shadow: 0 0 0 .5px rgb(var(--divider)), 0 1px 2px rgb(0 0 0 / .04), 0 6px 20px rgb(0 0 0 / .04); }
+:root[data-theme="dark"] .rv-table-wrap { box-shadow: 0 0 0 1px rgb(var(--divider)); }
+.rv-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.rv-table th { position: sticky; top: 0; z-index: 1; padding: 0 16px; height: 40px; text-align: left; font-size: 12px; font-weight: 600; letter-spacing: .01em; color: rgb(var(--text-secondary)); white-space: nowrap; background: rgb(var(--surface-elevated) / .72); -webkit-backdrop-filter: saturate(180%) blur(14px); backdrop-filter: saturate(180%) blur(14px); border-bottom: .5px solid rgb(var(--divider)); }
+:root[data-theme="light"] .rv-table th { background: rgb(246 246 248 / .86); }
+.rv-table td { padding: 12px 16px; vertical-align: middle; border-bottom: .5px solid rgb(var(--divider)); color: rgb(var(--text-primary)); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rv-table tbody tr:last-child td { border-bottom: 0; }
+.rv-table [data-align="right"] { text-align: right; }
+.rv-table th[data-align="right"] .rv-th-btn { margin-left: auto; }
+.rv-th-btn { display: inline-flex; align-items: center; gap: 4px; padding: 0; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; border-radius: 6px; }
+.rv-th-btn:hover { color: rgb(var(--text-primary)); }
+.rv-table tr[data-clickable] { cursor: pointer; transition: background-color .12s ease; }
+@media (hover: hover) { .rv-table tr[data-clickable]:hover td { background: rgb(var(--fill-primary) / .07); } }
+.rv-table tr[data-clickable]:active td { background: rgb(var(--fill-primary) / var(--fill-opacity-1)); }
+.rv-table tr[data-clickable]:focus-visible { outline: none; }
+.rv-table tr[data-clickable]:focus-visible td { background: rgb(var(--accent) / .08); }
+.rv-cell-main { font-weight: 600; letter-spacing: -.01em; }
+.rv-cell-sub { display: block; font-size: 12px; font-weight: 400; color: rgb(var(--text-tertiary)); }
+@media (max-width: 639px) { .rv-table th, .rv-table td { padding-left: 10px; padding-right: 10px; } .rv-table td { padding-top: 11px; padding-bottom: 11px; } }
+/* Last resort when even the essential columns do not fit: wrap instead of scrolling. */
+.rv-table[data-tight] { table-layout: fixed; }
+.rv-table[data-tight] td, .rv-table[data-tight] th { white-space: normal; overflow-wrap: anywhere; max-width: none; }
+
+/* ── Pipeline ── */
+/* The board wraps instead of scrolling sideways: as many columns per row as fit. */
+.rv-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 236px), 1fr)); gap: 12px; align-items: start; min-width: 0; }
+.rv-col { min-width: 0; border-radius: 18px; background: rgb(var(--fill-primary) / .08); padding: 6px; transition: background-color .16s ease, box-shadow .16s ease; }
+:root[data-theme="dark"] .rv-col { background: rgb(255 255 255 / .04); }
+.rv-col[data-over] { background: rgb(var(--accent-fill) / .12); box-shadow: inset 0 0 0 1.5px rgb(var(--accent-fill) / .5); }
+.rv-col-head { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px; }
+.rv-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.rv-col-title { font-size: 13px; font-weight: 600; letter-spacing: -.005em; color: rgb(var(--text-primary)); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rv-col-count { min-width: 20px; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600; text-align: center; color: rgb(var(--text-secondary)); background: rgb(var(--fill-primary) / var(--fill-opacity-1)); }
+.rv-col-total { margin-left: auto; font-size: 12px; font-weight: 500; color: rgb(var(--text-secondary)); white-space: nowrap; }
+.rv-col-body { display: flex; flex-direction: column; gap: 8px; padding: 2px; min-height: 72px; }
+.rv-col-empty { display: grid; place-items: center; min-height: 64px; border-radius: 12px; border: 1px dashed rgb(var(--divider)); font-size: 12.5px; color: rgb(var(--text-tertiary)); }
+
+.rv-card { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 12px 12px 11px; border-radius: 14px; background: rgb(var(--surface)); box-shadow: 0 0 0 .5px rgb(var(--divider)), 0 1px 2px rgb(0 0 0 / .05); text-align: left; transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease; -webkit-tap-highlight-color: transparent; }
+:root[data-theme="dark"] .rv-card { background: rgb(var(--surface-elevated)); box-shadow: 0 0 0 1px rgb(255 255 255 / .06); }
+.rv-card[data-clickable] { cursor: pointer; }
+@media (hover: hover) { .rv-card[data-clickable]:hover { transform: translateY(-1px); box-shadow: 0 0 0 .5px rgb(var(--divider)), 0 2px 4px rgb(0 0 0 / .06), 0 10px 24px rgb(0 0 0 / .08); } }
+.rv-card[data-clickable]:active { transform: scale(.985); }
+.rv-card[draggable="true"] { cursor: grab; }
+.rv-card[data-dragging] { opacity: .45; transform: scale(.97); }
+.rv-card:focus-visible { outline: none; box-shadow: 0 0 0 2px rgb(var(--accent) / .55); }
+.rv-card-top { display: flex; align-items: flex-start; gap: 8px; }
+.rv-card-title { flex: 1 1 0; min-width: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.012em; line-height: 1.3; color: rgb(var(--text-primary)); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rv-card-value { flex-shrink: 0; font-size: 14px; font-weight: 600; letter-spacing: -.01em; color: rgb(var(--text-primary)); white-space: nowrap; }
+.rv-card-sub { font-size: 12.5px; line-height: 1.35; color: rgb(var(--text-secondary)); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.rv-card-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.rv-card-meta { font-size: 11.5px; color: rgb(var(--text-tertiary)); }
+
+/* "Move to" menu — iOS popover */
+.rv-menu-anchor { position: relative; flex-shrink: 0; margin: -4px -6px 0 -2px; }
+.rv-more { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 0; background: transparent; color: rgb(var(--text-tertiary)); cursor: pointer; transition: background-color .14s ease, color .14s ease; }
+@media (hover: hover) { .rv-more:hover { background: rgb(var(--fill-primary) / var(--fill-opacity-1)); color: rgb(var(--text-primary)); } }
+.rv-menu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 30; min-width: 196px; padding: 6px; border-radius: 14px; background: rgb(var(--surface) / .92); -webkit-backdrop-filter: saturate(180%) blur(22px); backdrop-filter: saturate(180%) blur(22px); box-shadow: 0 0 0 .5px rgb(var(--divider)), 0 12px 40px rgb(0 0 0 / .22); animation: rv-pop .14s ease-out; transform-origin: top right; }
+:root[data-theme="dark"] .rv-menu { background: rgb(var(--surface-elevated) / .94); }
+.rv-menu-label { padding: 6px 10px 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: rgb(var(--text-tertiary)); }
+.rv-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 9px; background: transparent; font-size: 14px; color: rgb(var(--text-primary)); text-align: left; cursor: pointer; }
+.rv-menu-item:disabled { opacity: .38; cursor: default; }
+@media (hover: hover) { .rv-menu-item:not(:disabled):hover { background: rgb(var(--fill-primary) / var(--fill-opacity-1)); } }
+.rv-menu-item:not(:disabled):active { background: rgb(var(--fill-primary) / .22); }
+@keyframes rv-pop { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+
+@media (prefers-reduced-motion: reduce) { .rv-card, .rv-col, .rv-menu, .rv-switch-item { transition: none; animation: none; } }
+
+.rv-empty { display: grid; place-items: center; min-height: 120px; border-radius: 18px; background: rgb(var(--surface)); box-shadow: 0 0 0 .5px rgb(var(--divider)); font-size: 14px; color: rgb(var(--text-tertiary)); }
+
+/* The first column (what the row *is*) may wrap to two lines, so more columns survive on narrow screens. */
+.rv-table td:first-child, .rv-table th:first-child { white-space: normal; max-width: none; overflow-wrap: anywhere; }
+.rv-table td:first-child { min-width: 96px; }
+.rv-table td { max-width: 220px; }

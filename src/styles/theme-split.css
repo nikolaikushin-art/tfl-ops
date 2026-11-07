@@ -1,0 +1,126 @@
+/* Half dark: the workspace stays light; only navigation is dark.
+   theme.tsx sets data-theme="light" + data-nav="dark". Every light rule still applies
+   everywhere; inside the nav containers below the dark tokens are re-applied. */
+:root[data-nav="dark"] :is(.mrail, .mnav, .mside, .rs-panel--side, .tbar, .mbn, .mbn-qa-menu, .mbn-sheet, .msheet, .mdrawer, .rs-head, .rs-mhead) {
+  /* The very same tokens as the Dark theme (index.css), so Twilight navigation and Dark match exactly. */
+  --canvas: 11 11 12;
+  --surface: 21 19 21;
+  --surface-elevated: 32 29 32;
+  --text-primary: 243 240 233;
+  --text-secondary: 184 180 172;
+  --text-tertiary: 134 130 124;
+  --accent: 198 161 91;
+  --accent-fill: 125 37 48;
+  --accent-deep: 125 37 48;
+  --accent-ink: 240 244 249;
+  --divider: 48 44 48;
+  --success: 52 178 100;
+  --warning: 190 170 114;
+  --info: 150 170 196;
+  --tile-neutral: 84 82 84;
+  --danger: 255 69 58;
+  --caution: 154 154 162;
+  --fill-opacity-1: 0.2;
+  --fill-opacity-2: 0.16;
+  --side-bg: 17 16 17;
+  --side-tile: 32 29 32;
+  --side-hover: 40 37 40;
+  /* derived tokens are resolved at :root, so restate them for the nav scope */
+  --background: var(--canvas);
+  --foreground: var(--text-primary);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent-fill);
+  --secondary: var(--surface-elevated);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-elevated);
+  --muted-foreground: var(--text-secondary);
+  --accent-muted: var(--surface-elevated);
+  --border: var(--divider);
+  --input: var(--divider);
+  --ring: var(--accent);
+  color-scheme: dark;
+}
+/* White logo on the dark navigation */
+:root[data-nav="dark"][data-theme="light"] :is(.mnav, .mside, .rs-panel--side, .mrail, .tbar, .mbn, .msheet, .mdrawer, .rs-head, .rs-mhead) .light-only { display: none !important; }
+:root[data-nav="dark"][data-theme="light"] :is(.mnav, .mside, .rs-panel--side, .mrail, .tbar, .mbn, .msheet, .mdrawer, .rs-head, .rs-mhead) .dark-only { display: block !important; }
+/* Hairline where dark navigation meets the light page */
+:root[data-nav="dark"] .mbn { box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18); }
+
+/* Top bar follows the dark navigation */
+:root[data-nav="dark"] .tbar { background: rgb(var(--canvas)); border-bottom-color: rgb(var(--divider)); color: rgb(var(--text-primary)); }
+:root[data-nav="dark"] .tbar .tbar-search { background-color: rgba(255,255,255,.08); }
+:root[data-nav="dark"] .tbar .tbar-avatar { background: color-mix(in srgb, rgb(var(--text-primary)) 8%, transparent); }
+
+/* Twilight: second navigation (module header on desktop, top bar on phones) and the phone sheet/drawer are dark too */
+:root[data-nav="dark"] .rs-head,
+:root[data-nav="dark"] .rs-mhead {
+  background: rgb(var(--canvas)); border-bottom-color: rgb(var(--divider)); color: rgb(var(--text-primary));
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+:root[data-nav="dark"] .msheet { background: rgb(var(--canvas)); border-right-color: rgb(var(--divider)); color: rgb(var(--text-primary)); }
+:root[data-nav="dark"] .msheet .mside,
+:root[data-nav="dark"] .msheet-body { background: transparent; }
+:root[data-nav="dark"] .mdrawer { background: rgb(var(--canvas)); color: rgb(var(--text-primary)); }
+:root[data-nav="dark"] :is(.rs-head, .rs-mhead, .msheet) .rs-icon-btn { color: rgb(var(--text-secondary)); }
+:root[data-nav="dark"] :is(.rs-head, .rs-mhead, .msheet) .rs-icon-btn:hover { background: rgb(var(--side-hover)); color: rgb(var(--text-primary)); }
+:root[data-nav="dark"] :is(.rs-head, .rs-mhead) .rs-icon-btn[aria-pressed="true"],
+:root[data-nav="dark"] :is(.rs-head, .rs-mhead) .rs-icon-btn--lg[aria-expanded="true"] { color: rgb(var(--text-primary)); }
+
+/* ───────── Twilight polish ───────── */
+/* Phone status-bar area: the dark top bar and sheet run edge to edge under the notch */
+:root[data-nav="dark"] .rs-mhead { padding-top: env(safe-area-inset-top, 0px); }
+/* Soft separation where the dark header meets the light page */
+:root[data-nav="dark"] .rs-head { box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25), 0 6px 16px -10px rgba(0, 0, 0, 0.35); }
+:root[data-nav="dark"] .rs-head-title span,
+:root[data-nav="dark"] .rs-mhead-title span { color: rgb(var(--text-tertiary)); }
+/* Sheet and drawer: calmer separation, clear active row, readable section labels */
+:root[data-nav="dark"] .msheet { box-shadow: 0 0 60px rgba(0, 0, 0, 0.6); }
+:root[data-nav="dark"] .msheet-head { border-bottom-color: rgb(var(--divider)); }
+:root[data-nav="dark"] .msheet .mside-label { color: rgb(var(--text-tertiary)); }
+:root[data-nav="dark"] .msheet .mside-nav.is-active,
+:root[data-nav="dark"] .mside-nav.is-active { background: rgb(var(--accent-fill)); color: #fff; box-shadow: inset 3px 0 0 rgb(var(--accent)); }
+/* Touch screens have no hover: stop the dark "stuck hover" bars seen after tapping */
+@media (hover: none) {
+  :root[data-nav="dark"] :is(.msheet, .mdrawer, .mside, .mnav) :is(.mside-nav, .mside-settings, .mnav-item):hover:not(.is-active):not(.active) { background: transparent; }
+}
+/* Keyboard focus visible on dark surfaces */
+:root[data-nav="dark"] :is(.rs-head, .rs-mhead, .msheet, .mdrawer) :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 1px; }
+/* Smooth theme switch for the navigation chrome */
+:root[data-nav="dark"] :is(.rs-head, .rs-mhead, .msheet, .mdrawer) { transition: background-color .2s ease, border-color .2s ease; }
+
+/* ───────── Twilight: cool slate page tones ─────────
+   Light pages get a faint blue-grey cast so the navy navigation and the page read as one design.
+   Navigation scopes above re-declare their own dark tokens, so they are unaffected. */
+:root[data-nav="dark"][data-theme="light"] {
+  --canvas: 237 241 247;
+  --surface: 255 255 255;
+  --surface-elevated: 228 234 242;
+  --text-primary: 14 20 30;
+  --text-secondary: 88 100 118;
+  --text-tertiary: 136 147 164;
+  --divider: 212 220 232;
+  --tile-neutral: 92 104 124;
+  /* derived tokens are resolved at :root — restate so the new values reach them */
+  --background: var(--canvas);
+  --foreground: var(--text-primary);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface);
+  --popover-foreground: var(--text-primary);
+  --secondary: var(--surface-elevated);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-elevated);
+  --muted-foreground: var(--text-secondary);
+  --accent-muted: var(--surface-elevated);
+  --border: var(--divider);
+  --input: var(--divider);
+}
+
+/* Twilight: lighter elements on the navy — brighter icons and tiles, clearer rows */
+:root[data-nav="dark"] :is(.mside, .mnav, .msheet, .mdrawer, .rs-head, .rs-mhead) :is(.mside-ico, .mnav-ico, .rs-icon-btn svg) { color: rgb(var(--text-primary) / .92); }
+:root[data-nav="dark"] :is(.mside-nav, .mnav-item):not(.is-active):not(.active) { color: rgb(var(--text-primary) / .94); }
+:root[data-nav="dark"] .mside-settings .tile { background: rgb(var(--side-tile)); }
+:root[data-nav="dark"] .mside-count { background: rgb(var(--surface-elevated)); color: rgb(var(--text-primary)); }
